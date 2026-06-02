@@ -1,0 +1,73 @@
+@model KyTucXaManagement.Models.Phong
+@{
+    ViewData["Title"] = $"Phòng {Model.MaPhong}";
+}
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white"><i class="bi bi-door-open me-2"></i>Phòng @Model.MaPhong</div>
+            <div class="card-body small">
+                <div class="row g-2">
+                    <div class="col-5 text-muted">Loại phòng</div><div class="col-7 fw-semibold">@Model.LoaiPhong</div>
+                    <div class="col-5 text-muted">Tòa nhà</div><div class="col-7 fw-semibold">@Model.ToaNha</div>
+                    <div class="col-5 text-muted">Tầng</div><div class="col-7 fw-semibold">@Model.Tang</div>
+                    <div class="col-5 text-muted">Giới tính</div><div class="col-7 fw-semibold">@Model.GioiTinh</div>
+                    <div class="col-5 text-muted">Sức chứa</div><div class="col-7 fw-semibold">@Model.SoNguoiHienTai/@Model.SucChua người</div>
+                    <div class="col-5 text-muted">Giá phòng</div><div class="col-7 fw-semibold">@string.Format("{0:N0}đ", Model.GiaPhong)</div>
+                    <div class="col-5 text-muted">Trạng thái</div>
+                    <div class="col-7">
+                        <span class="badge @(Model.TrangThai == "Còn chỗ" ? "bg-success" : Model.TrangThai == "Đầy" ? "bg-danger" : "bg-warning text-dark")">
+                            @Model.TrangThai
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-2 d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-sm flex-fill"><i class="bi bi-pencil me-1"></i>Sửa</a>
+            <a asp-action="Index" class="btn btn-outline-secondary btn-sm flex-fill"><i class="bi bi-arrow-left me-1"></i>Quay lại</a>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card mb-3">
+            <div class="card-header bg-white"><i class="bi bi-people me-2 text-primary"></i>Sinh viên trong phòng (@Model.SinhViens.Count)</div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead class="table-light"><tr><th>Mã SV</th><th>Họ tên</th><th>Giới tính</th><th>Trạng thái</th></tr></thead>
+                    <tbody>
+                        @foreach (var sv in Model.SinhViens)
+                        {
+                            <tr>
+                                <td><code>@sv.MaSinhVien</code></td>
+                                <td>@sv.HoTen</td>
+                                <td>@sv.GioiTinh</td>
+                                <td><span class="badge @(sv.TrangThai == "Đang nội trú" ? "bg-success" : "bg-secondary")">@sv.TrangThai</span></td>
+                            </tr>
+                        }
+                        @if (!Model.SinhViens.Any()) { <tr><td colspan="4" class="text-center py-3 text-muted">Chưa có sinh viên</td></tr> }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header bg-white"><i class="bi bi-box-seam me-2 text-warning"></i>Tài sản (@Model.TaiSans.Count)</div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead class="table-light"><tr><th>Tài sản</th><th>Loại</th><th>SL</th><th>Tình trạng</th></tr></thead>
+                    <tbody>
+                        @foreach (var ts in Model.TaiSans)
+                        {
+                            <tr>
+                                <td>@ts.TenTaiSan</td>
+                                <td>@ts.LoaiTaiSan</td>
+                                <td>@ts.SoLuong</td>
+                                <td><span class="badge @(ts.TinhTrang == "Bình thường" ? "bg-success" : "bg-danger")">@ts.TinhTrang</span></td>
+                            </tr>
+                        }
+                        @if (!Model.TaiSans.Any()) { <tr><td colspan="4" class="text-center py-3 text-muted">Chưa có tài sản</td></tr> }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

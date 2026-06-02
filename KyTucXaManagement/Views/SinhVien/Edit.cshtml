@@ -1,0 +1,85 @@
+@model KyTucXaManagement.Models.SinhVien
+@{
+    ViewData["Title"] = "Chỉnh sửa sinh viên";
+}
+
+<div class="card" style="max-width:700px">
+    <div class="card-header bg-warning text-dark">
+        <i class="bi bi-pencil me-2"></i>Chỉnh sửa: @Model.HoTen
+    </div>
+    <div class="card-body">
+        <form asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="MaSinhVien" class="form-label fw-semibold small"></label>
+                    <input asp-for="MaSinhVien" class="form-control form-control-sm" />
+                    <span asp-validation-for="MaSinhVien" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="HoTen" class="form-label fw-semibold small"></label>
+                    <input asp-for="HoTen" class="form-control form-control-sm" />
+                    <span asp-validation-for="HoTen" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="NgaySinh" class="form-label fw-semibold small"></label>
+                    <input asp-for="NgaySinh" class="form-control form-control-sm" type="date" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="GioiTinh" class="form-label fw-semibold small"></label>
+                    <select asp-for="GioiTinh" class="form-select form-select-sm">
+                        <option>Nam</option>
+                        <option>Nữ</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="SoDienThoai" class="form-label fw-semibold small"></label>
+                    <input asp-for="SoDienThoai" class="form-control form-control-sm" />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Email" class="form-label fw-semibold small"></label>
+                    <input asp-for="Email" class="form-control form-control-sm" />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="PhongId" class="form-label fw-semibold small">Phòng</label>
+                    <select asp-for="PhongId" asp-items="ViewBag.Phongs" class="form-select form-select-sm">
+                        <option value="">-- Chưa có phòng --</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="NamHoc" class="form-label fw-semibold small"></label>
+                    <select asp-for="NamHoc" class="form-select form-select-sm">
+                        <option>Năm 1</option><option>Năm 2</option><option>Năm 3</option><option>Năm 4</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="TrangThai" class="form-label fw-semibold small"></label>
+                    <select asp-for="TrangThai" class="form-select form-select-sm">
+                        <option>Đang nội trú</option>
+                        <option>Tạm khóa</option>
+                        <option>Đã rời KTX</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="QueQuan" class="form-label fw-semibold small"></label>
+                    <input asp-for="QueQuan" class="form-control form-control-sm" />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="DienUuTien" class="form-label fw-semibold small"></label>
+                    <select asp-for="DienUuTien" class="form-select form-select-sm">
+                        <option value="">-- Không --</option>
+                        <option>Con liệt sĩ/thương binh</option>
+                        <option>Dân tộc thiểu số</option>
+                        <option>Vùng sâu vùng xa</option>
+                        <option>Hộ nghèo</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-warning"><i class="bi bi-save me-1"></i>Cập nhật</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>

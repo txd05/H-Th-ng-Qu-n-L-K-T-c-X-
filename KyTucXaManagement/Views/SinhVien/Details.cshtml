@@ -1,0 +1,103 @@
+@model KyTucXaManagement.Models.SinhVien
+@{
+    ViewData["Title"] = "Chi tiết sinh viên";
+}
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center py-4">
+                <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width:80px;height:80px">
+                    <i class="bi bi-person-fill text-white fs-1"></i>
+                </div>
+                <h5 class="mb-1">@Model.HoTen</h5>
+                <code>@Model.MaSinhVien</code>
+                <div class="mt-2">
+                    <span class="badge @(Model.TrangThai == "Đang nội trú" ? "bg-success" : "bg-secondary") fs-6">
+                        @Model.TrangThai
+                    </span>
+                </div>
+            </div>
+            <div class="card-body border-top">
+                <div class="row g-2 small">
+                    <div class="col-5 text-muted">Giới tính</div><div class="col-7 fw-semibold">@Model.GioiTinh</div>
+                    <div class="col-5 text-muted">Ngày sinh</div><div class="col-7 fw-semibold">@Model.NgaySinh.ToString("dd/MM/yyyy")</div>
+                    <div class="col-5 text-muted">SĐT</div><div class="col-7 fw-semibold">@Model.SoDienThoai</div>
+                    <div class="col-5 text-muted">Email</div><div class="col-7">@(Model.Email ?? "-")</div>
+                    <div class="col-5 text-muted">Quê quán</div><div class="col-7">@(Model.QueQuan ?? "-")</div>
+                    <div class="col-5 text-muted">Ưu tiên</div><div class="col-7">@(Model.DienUuTien ?? "Không")</div>
+                    <div class="col-5 text-muted">Năm học</div><div class="col-7">@(Model.NamHoc ?? "-")</div>
+                    <div class="col-5 text-muted">Vào KTX</div><div class="col-7">@Model.NgayVaoKTX?.ToString("dd/MM/yyyy")</div>
+                </div>
+            </div>
+        </div>
+        <div class="card mt-3">
+            <div class="card-header bg-white"><i class="bi bi-door-open me-2 text-primary"></i>Thông tin phòng</div>
+            <div class="card-body small">
+                @if (Model.Phong != null)
+                {
+                    <div><b>Phòng:</b> @Model.Phong.MaPhong</div>
+                    <div><b>Loại:</b> @Model.Phong.LoaiPhong</div>
+                    <div><b>Tòa nhà:</b> @Model.Phong.ToaNha - Tầng @Model.Phong.Tang</div>
+                    <div><b>Giá:</b> @string.Format("{0:N0}đ", Model.Phong.GiaPhong)/tháng</div>
+                }
+                else { <span class="text-muted">Chưa có phòng</span> }
+            </div>
+        </div>
+        <div class="mt-3 d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-sm flex-fill">
+                <i class="bi bi-pencil me-1"></i>Chỉnh sửa
+            </a>
+            <a asp-action="Index" class="btn btn-outline-secondary btn-sm flex-fill">
+                <i class="bi bi-arrow-left me-1"></i>Quay lại
+            </a>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card mb-3">
+            <div class="card-header bg-white"><i class="bi bi-receipt me-2 text-success"></i>Hóa đơn</div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead class="table-light">
+                        <tr><th>Tháng/Năm</th><th>Tiền phòng</th><th>Điện</th><th>Nước</th><th>Tổng</th><th>Trạng thái</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var hd in Model.HoaDons.OrderByDescending(h => h.Nam).ThenByDescending(h => h.Thang))
+                        {
+                            <tr>
+                                <td>@hd.Thang/@hd.Nam</td>
+                                <td>@string.Format("{0:N0}", hd.TienPhong)đ</td>
+                                <td>@string.Format("{0:N0}", hd.TienDien)đ</td>
+                                <td>@string.Format("{0:N0}", hd.TienNuoc)đ</td>
+                                <td><b>@string.Format("{0:N0}", hd.TienPhong + hd.TienDien + hd.TienNuoc + hd.PhiKhac)đ</b></td>
+                                <td><span class="badge @(hd.TrangThai == "Đã thanh toán" ? "bg-success" : "bg-warning text-dark")">@hd.TrangThai</span></td>
+                            </tr>
+                        }
+                        @if (!Model.HoaDons.Any()) { <tr><td colspan="6" class="text-center text-muted py-3">Chưa có hóa đơn</td></tr> }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header bg-white"><i class="bi bi-file-earmark-text me-2 text-info"></i>Đơn yêu cầu</div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead class="table-light">
+                        <tr><th>Loại đơn</th><th>Ngày nộp</th><th>Trạng thái</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var don in Model.DonYeuCaus.OrderByDescending(d => d.NgayNop))
+                        {
+                            <tr>
+                                <td>@don.LoaiDon</td>
+                                <td>@don.NgayNop.ToString("dd/MM/yyyy")</td>
+                                <td><span class="badge @(don.TrangThai == "Đã duyệt" ? "bg-success" : don.TrangThai == "Từ chối" ? "bg-danger" : "bg-warning text-dark")">@don.TrangThai</span></td>
+                            </tr>
+                        }
+                        @if (!Model.DonYeuCaus.Any()) { <tr><td colspan="3" class="text-center text-muted py-3">Chưa có đơn</td></tr> }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

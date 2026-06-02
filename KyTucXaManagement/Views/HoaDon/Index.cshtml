@@ -1,0 +1,146 @@
+@model IEnumerable<KyTucXaManagement.Models.HoaDon>
+@{
+    ViewData["Title"] = "Quản lý hóa đơn";
+}
+
+<div class="card mb-3">
+    <div class="card-body py-2">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-2">
+                <input type="number" name="thang" class="form-control form-control-sm" placeholder="Tháng" value="@ViewBag.Thang" min="1" max="12" />
+            </div>
+            <div class="col-md-2">
+                <input type="number" name="nam" class="form-control form-control-sm" placeholder="Năm" value="@ViewBag.Nam" />
+            </div>
+            <div class="col-md-3">
+                <select name="trangThai" class="form-select form-select-sm">
+                    <option value="">-- Trạng thái --</option>
+                    <option value="Chưa thanh toán" selected="@(ViewBag.TrangThai == "Chưa thanh toán")">Chưa thanh toán</option>
+                    <option value="Đã thanh toán" selected="@(ViewBag.TrangThai == "Đã thanh toán")">Đã thanh toán</option>
+                    <option value="Quá hạn" selected="@(ViewBag.TrangThai == "Quá hạn")">Quá hạn</option>
+                </select>
+            </div>
+            <div class="col-md-5 d-flex gap-2">
+                <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-filter"></i> Lọc</button>
+                <a asp-action="Index" class="btn btn-outline-secondary btn-sm"><i class="bi bi-x"></i></a>
+                <a asp-action="Create" class="btn btn-success btn-sm"><i class="bi bi-plus-circle"></i> Tạo HĐ</a>
+                <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalLapHD">
+                    <i class="bi bi-lightning"></i> Lập tự động
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (ViewBag.TongTienChuaThanhToan > 0)
+{
+    <div class="alert alert-warning py-2">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        Tổng số tiền chưa thanh toán: <strong>@string.Format("{0:N0}đ", ViewBag.TongTienChuaThanhToan)</strong>
+    </div>
+}
+
+<div class="card">
+    <div class="card-header bg-white d-flex justify-content-between">
+        <span><i class="bi bi-receipt me-2 text-success"></i>Danh sách hóa đơn</span>
+        <span class="badge bg-success">@Model.Count() hóa đơn</span>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Mã HĐ</th>
+                        <th>Sinh viên</th>
+                        <th>Phòng</th>
+                        <th>Tháng/Năm</th>
+                        <th>Tiền phòng</th>
+                        <th>Điện + Nước</th>
+                        <th>Tổng</th>
+                        <th>Hạn TT</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var hd in Model)
+                    {
+                        var tong = hd.TienPhong + hd.TienDien + hd.TienNuoc + hd.PhiKhac;
+                        var isQuaHan = hd.TrangThai == "Chưa thanh toán" && hd.HanThanhToan < DateTime.Now;
+                        <tr class="@(isQuaHan ? "table-danger" : "")">
+                            <td><small><code>@hd.MaHoaDon</code></small></td>
+                            <td>@hd.SinhVien?.HoTen</td>
+                            <td>@(hd.Phong?.MaPhong ?? "-")</td>
+                            <td>@hd.Thang/@hd.Nam</td>
+                            <td>@string.Format("{0:N0}", hd.TienPhong)đ</td>
+                            <td>@string.Format("{0:N0}", hd.TienDien + hd.TienNuoc)đ</td>
+                            <td><strong>@string.Format("{0:N0}", tong)đ</strong></td>
+                            <td class="small">@hd.HanThanhToan?.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @if (isQuaHan)
+                                {
+                                    <span class="badge bg-danger">Quá hạn</span>
+                                }
+                                else
+                                {
+                                    <span class="badge @(hd.TrangThai == "Đã thanh toán" ? "bg-success" : "bg-warning text-dark")">@hd.TrangThai</span>
+                                }
+                            </td>
+                            <td>
+                                @if (hd.TrangThai != "Đã thanh toán")
+                                {
+                                    <form asp-action="XacNhanThanhToan" asp-route-id="@hd.Id" method="post" class="d-inline"
+                                          onsubmit="return confirm('Xác nhận thanh toán?')">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-xs btn-success btn-sm" title="Xác nhận TT">
+                                            <i class="bi bi-check-circle"></i>
+                                        </button>
+                                    </form>
+                                    <form asp-action="Delete" asp-route-id="@hd.Id" method="post" class="d-inline"
+                                          onsubmit="return confirm('Xóa hóa đơn này?')">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small"><i class="bi bi-check-all"></i></span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any()) { <tr><td colspan="10" class="text-center py-4 text-muted">Không có hóa đơn nào.</td></tr> }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal lập hóa đơn tự động -->
+<div class="modal fade" id="modalLapHD" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header"><h6 class="modal-title">Lập hóa đơn tự động</h6></div>
+            <form asp-action="LapHoaDonTuDong" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="mb-2">
+                        <label class="form-label small">Tháng</label>
+                        <input type="number" name="thang" class="form-control form-control-sm" value="@DateTime.Now.Month" min="1" max="12" />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small">Năm</label>
+                        <input type="number" name="nam" class="form-control form-control-sm" value="@DateTime.Now.Year" />
+                    </div>
+                    <small class="text-muted">Hệ thống sẽ tự động lập hóa đơn dựa trên chỉ số điện/nước đã nhập.</small>
+                </div>
+                <div class="modal-footer py-2">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Lập ngay</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

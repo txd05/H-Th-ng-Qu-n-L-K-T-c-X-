@@ -1,0 +1,135 @@
+@model IEnumerable<KyTucXaManagement.Models.SinhVien>
+@{
+    ViewData["Title"] = "Thống kê sinh viên";
+}
+
+<div class="row g-3 mb-4">
+    <div class="col-md-2">
+        <div class="card text-center border-primary">
+            <div class="card-body py-3">
+                <div class="fw-bold text-primary fs-4">@ViewBag.TongSinhVien</div>
+                <div class="small text-muted">Tổng cộng</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-center border-success">
+            <div class="card-body py-3">
+                <div class="fw-bold text-success fs-4">@ViewBag.DangNoiTru</div>
+                <div class="small text-muted">Đang nội trú</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-center border-secondary">
+            <div class="card-body py-3">
+                <div class="fw-bold text-secondary fs-4">@ViewBag.DaRoi</div>
+                <div class="small text-muted">Đã rời KTX</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-center border-info">
+            <div class="card-body py-3">
+                <div class="fw-bold text-info fs-4">@ViewBag.SinhVienNam</div>
+                <div class="small text-muted">Sinh viên nam</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-center border-warning">
+            <div class="card-body py-3">
+                <div class="fw-bold text-warning fs-4">@ViewBag.SinhVienNu</div>
+                <div class="small text-muted">Sinh viên nữ</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-center border-danger">
+            <div class="card-body py-3">
+                <div class="fw-bold text-danger" style="font-size:1rem">@string.Format("{0:N0}đ", ViewBag.TongNo)</div>
+                <div class="small text-muted">Tổng nợ</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-table me-2 text-primary"></i>Danh sách toàn bộ sinh viên đã thuê phòng</span>
+        <span class="badge bg-primary">@Model.Count() sinh viên</span>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Mã SV</th>
+                        <th>Họ tên</th>
+                        <th>Giới tính</th>
+                        <th>Phòng</th>
+                        <th>Tòa nhà</th>
+                        <th>Ngày vào</th>
+                        <th>Thẻ KTX</th>
+                        <th>Hóa đơn chưa TT</th>
+                        <th>Trạng thái</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int i = 1; }
+                    @foreach (var sv in Model)
+                    {
+                        var hdChuaTT = sv.HoaDons.Count(h => h.TrangThai == "Chưa thanh toán");
+                        var tongNo = sv.HoaDons.Where(h => h.TrangThai == "Chưa thanh toán").Sum(h => h.TienPhong + h.TienDien + h.TienNuoc + h.PhiKhac);
+                        <tr>
+                            <td class="text-muted small">@(i++)</td>
+                            <td><code>@sv.MaSinhVien</code></td>
+                            <td><strong>@sv.HoTen</strong></td>
+                            <td>
+                                <i class="bi @(sv.GioiTinh == "Nam" ? "bi-gender-male text-primary" : "bi-gender-female text-danger")"></i>
+                                @sv.GioiTinh
+                            </td>
+                            <td>@(sv.Phong?.MaPhong ?? "<i>Chưa có</i>")</td>
+                            <td>@(sv.Phong?.ToaNha ?? "-")</td>
+                            <td class="small text-muted">@sv.NgayVaoKTX?.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @if (sv.TheKTX != null)
+                                {
+                                    <span class="badge @(sv.TheKTX.TrangThai == "Còn hiệu lực" ? "bg-success" : "bg-danger")">
+                                        @sv.TheKTX.TrangThai
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-light text-muted">Chưa có</span>
+                                }
+                            </td>
+                            <td>
+                                @if (hdChuaTT > 0)
+                                {
+                                    <span class="badge bg-warning text-dark">@hdChuaTT HĐ | @string.Format("{0:N0}đ", tongNo)</span>
+                                }
+                                else
+                                {
+                                    <span class="text-success small"><i class="bi bi-check-circle"></i> Đã thanh toán</span>
+                                }
+                            </td>
+                            <td>
+                                <span class="badge @(sv.TrangThai == "Đang nội trú" ? "bg-success" : sv.TrangThai == "Đã rời KTX" ? "bg-secondary" : "bg-warning text-dark")">
+                                    @sv.TrangThai
+                                </span>
+                            </td>
+                            <td>
+                                <a asp-controller="SinhVien" asp-action="Details" asp-route-id="@sv.Id" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

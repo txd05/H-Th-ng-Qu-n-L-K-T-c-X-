@@ -1,0 +1,92 @@
+@model IEnumerable<KyTucXaManagement.Models.SuCoTaiSan>
+@{
+    ViewData["Title"] = "Quản lý sự cố tài sản";
+}
+<div class="d-flex gap-2 mb-3">
+    <a asp-action="CreateSuCo" class="btn btn-danger btn-sm"><i class="bi bi-plus-circle me-1"></i>Báo sự cố</a>
+    <a asp-action="SuCo" asp-route-trangThai="Chờ xử lý" class="btn btn-outline-warning btn-sm">Chờ xử lý</a>
+    <a asp-action="SuCo" asp-route-trangThai="Đã xử lý" class="btn btn-outline-success btn-sm">Đã xử lý</a>
+    <a asp-action="SuCo" class="btn btn-outline-secondary btn-sm">Tất cả</a>
+</div>
+<div class="card">
+    <div class="card-header bg-white d-flex justify-content-between">
+        <span><i class="bi bi-tools me-2 text-danger"></i>Danh sách sự cố</span>
+        <span class="badge bg-danger">@Model.Count() sự cố</span>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr><th>Tài sản</th><th>Phòng</th><th>Mô tả</th><th>Mức độ</th><th>Ngày báo</th><th>Chi phí</th><th>Trạng thái</th><th>Thao tác</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var sc in Model)
+                {
+                    <tr>
+                        <td>@sc.TaiSan?.TenTaiSan</td>
+                        <td>@sc.TaiSan?.Phong?.MaPhong</td>
+                        <td class="small">@(sc.MoTaSuCo.Length > 50 ? sc.MoTaSuCo[..50] + "..." : sc.MoTaSuCo)</td>
+                        <td>
+                            <span class="badge @(sc.MucDo == "Nặng" ? "bg-danger" : sc.MucDo == "Vừa" ? "bg-warning text-dark" : "bg-info")">
+                                @sc.MucDo
+                            </span>
+                        </td>
+                        <td class="small">@sc.NgayBao.ToString("dd/MM/yyyy")</td>
+                        <td>@(sc.ChiPhiSua.HasValue ? string.Format("{0:N0}đ", sc.ChiPhiSua) : "-")</td>
+                        <td>
+                            <span class="badge @(sc.TrangThai == "Đã xử lý" ? "bg-success" : "bg-warning text-dark")">@sc.TrangThai</span>
+                        </td>
+                        <td>
+                            @if (sc.TrangThai != "Đã xử lý")
+                            {
+                                <button type="button" class="btn btn-sm btn-success"
+                                        data-bs-toggle="modal" data-bs-target="#modalXuLy"
+                                        data-id="@sc.Id" data-ts="@sc.TaiSan?.TenTaiSan">
+                                    <i class="bi bi-check-circle"></i> Xử lý
+                                </button>
+                            }
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any()) { <tr><td colspan="8" class="text-center py-4 text-muted">Không có sự cố nào.</td></tr> }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="modalXuLy" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header"><h6 class="modal-title">Xử lý sự cố</h6></div>
+            <form asp-action="XuLySuCo" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" id="modalSuCoId" />
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Người sửa chữa</label>
+                        <input type="text" name="nguoiSua" class="form-control form-control-sm" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Chi phí sửa (đ)</label>
+                        <input type="number" name="chiPhiSua" class="form-control form-control-sm" value="0" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Ghi chú</label>
+                        <textarea name="ghiChu" class="form-control form-control-sm" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer py-2">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-success btn-sm">Xác nhận xử lý</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('modalXuLy').addEventListener('show.bs.modal', function (e) {
+            document.getElementById('modalSuCoId').value = e.relatedTarget.getAttribute('data-id');
+        });
+    </script>
+}
