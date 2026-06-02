@@ -1,6 +1,7 @@
 @model KyTucXaManagement.Models.SinhVien
 @{
     ViewData["Title"] = "Thêm sinh viên mới";
+    var danhSachPhong = ViewBag.Phongs as IEnumerable<dynamic> ?? Enumerable.Empty<dynamic>();
 }
 
 <div class="card" style="max-width:700px">
@@ -28,7 +29,7 @@
                 </div>
                 <div class="col-md-4">
                     <label asp-for="GioiTinh" class="form-label fw-semibold small"></label>
-                    <select asp-for="GioiTinh" class="form-select form-select-sm">
+                    <select asp-for="GioiTinh" id="selectGioiTinh" class="form-select form-select-sm">
                         <option value="Nam">Nam</option>
                         <option value="Nữ">Nữ</option>
                     </select>
@@ -43,10 +44,23 @@
                     <input asp-for="Email" class="form-control form-control-sm" type="email" />
                 </div>
                 <div class="col-md-6">
-                    <label asp-for="PhongId" class="form-label fw-semibold small">Phòng</label>
-                    <select asp-for="PhongId" asp-items="ViewBag.Phongs" class="form-select form-select-sm">
+                    <label asp-for="PhongId" class="form-label fw-semibold small">
+                        Phòng <span id="badgeGioiTinh" class="badge bg-primary ms-1">Nam</span>
+                    </label>
+                    <select id="selectPhong" name="PhongId" class="form-select form-select-sm">
                         <option value="">-- Chọn phòng --</option>
+                        @foreach (var p in danhSachPhong)
+                        {
+                            <option value="@p.Id"
+                                    data-gioitinh="@p.GioiTinh"
+                                    data-concho="@(p.SucChua - p.SoNguoiHienTai)">
+                                @p.MaPhong — @p.GioiTinh (@(p.SucChua - p.SoNguoiHienTai) chỗ trống)
+                            </option>
+                        }
                     </select>
+                    <div id="phongWarning" class="text-danger small mt-1" style="display:none">
+                        <i class="bi bi-exclamation-triangle me-1"></i>Không có phòng phù hợp cho giới tính này.
+                    </div>
                 </div>
                 <div class="col-md-6">
                     <label asp-for="QueQuan" class="form-label fw-semibold small"></label>
@@ -91,3 +105,36 @@
         </form>
     </div>
 </div>
+
+@section Scripts {
+<script>
+    const selectGioiTinh = document.getElementById('selectGioiTinh');
+    const selectPhong    = document.getElementById('selectPhong');
+    const badge          = document.getElementById('badgeGioiTinh');
+    const warning        = document.getElementById('phongWarning');
+
+    // Tất cả options (trừ option đầu "-- Chọn phòng --")
+    const allOptions = Array.from(selectPhong.options).slice(1);
+
+    function filterPhong() {
+        const gt = selectGioiTinh.value; // "Nam" hoặc "Nữ"
+        badge.textContent = gt;
+        badge.className   = 'badge ms-1 ' + (gt === 'Nam' ? 'bg-primary' : 'bg-danger');
+
+        // Xóa hết options cũ (giữ lại option đầu)
+        while (selectPhong.options.length > 1) selectPhong.remove(1);
+
+        // Chỉ thêm phòng đúng giới tính
+        const filtered = allOptions.filter(o => o.dataset.gioitinh === gt);
+        filtered.forEach(o => selectPhong.add(o.cloneNode(true)));
+
+        // Hiện cảnh báo nếu không có phòng phù hợp
+        warning.style.display = filtered.length === 0 ? 'block' : 'none';
+    }
+
+    selectGioiTinh.addEventListener('change', filterPhong);
+
+    // Chạy ngay khi load để khớp với giá trị mặc định
+    filterPhong();
+</script>
+}

@@ -52,7 +52,12 @@ namespace KyTucXaManagement.Controllers
 
         public IActionResult Create()
         {
-            ViewBag.Phongs = new SelectList(_context.Phongs.Where(p => p.TrangThai != "Đóng cửa"), "Id", "MaPhong");
+            // Truyền toàn bộ phòng còn chỗ kèm GioiTinh để JS filter
+            ViewBag.Phongs = _context.Phongs
+                .Where(p => p.TrangThai != "Đóng cửa" && p.TrangThai != "Đầy")
+                .OrderBy(p => p.MaPhong)
+                .Select(p => new { p.Id, p.MaPhong, p.GioiTinh, p.SoNguoiHienTai, p.SucChua })
+                .ToList();
             return View();
         }
 
@@ -77,7 +82,11 @@ namespace KyTucXaManagement.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Phongs = new SelectList(_context.Phongs.Where(p => p.TrangThai != "Đóng cửa"), "Id", "MaPhong");
+            ViewBag.Phongs = _context.Phongs
+                .Where(p => p.TrangThai != "Đóng cửa" && p.TrangThai != "Đầy")
+                .OrderBy(p => p.MaPhong)
+                .Select(p => new { p.Id, p.MaPhong, p.GioiTinh, p.SoNguoiHienTai, p.SucChua })
+                .ToList();
             return View(model);
         }
 
@@ -85,7 +94,11 @@ namespace KyTucXaManagement.Controllers
         {
             var sv = await _context.SinhViens.FindAsync(id);
             if (sv == null) return NotFound();
-            ViewBag.Phongs = new SelectList(_context.Phongs.Where(p => p.TrangThai != "Đóng cửa"), "Id", "MaPhong", sv.PhongId);
+            ViewBag.Phongs = _context.Phongs
+                .Where(p => p.TrangThai != "Đóng cửa")
+                .OrderBy(p => p.MaPhong)
+                .Select(p => new { p.Id, p.MaPhong, p.GioiTinh, p.SoNguoiHienTai, p.SucChua })
+                .ToList();
             return View(sv);
         }
 
@@ -115,7 +128,11 @@ namespace KyTucXaManagement.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Phongs = new SelectList(_context.Phongs.Where(p => p.TrangThai != "Đóng cửa"), "Id", "MaPhong", model.PhongId);
+            ViewBag.Phongs = _context.Phongs
+                .Where(p => p.TrangThai != "Đóng cửa")
+                .OrderBy(p => p.MaPhong)
+                .Select(p => new { p.Id, p.MaPhong, p.GioiTinh, p.SoNguoiHienTai, p.SucChua })
+                .ToList();
             return View(model);
         }
 

@@ -1,6 +1,7 @@
 @model KyTucXaManagement.Models.SinhVien
 @{
     ViewData["Title"] = "Chỉnh sửa sinh viên";
+    var danhSachPhong = ViewBag.Phongs as IEnumerable<dynamic> ?? Enumerable.Empty<dynamic>();
 }
 
 <div class="card" style="max-width:700px">
@@ -28,9 +29,9 @@
                 </div>
                 <div class="col-md-4">
                     <label asp-for="GioiTinh" class="form-label fw-semibold small"></label>
-                    <select asp-for="GioiTinh" class="form-select form-select-sm">
-                        <option>Nam</option>
-                        <option>Nữ</option>
+                    <select asp-for="GioiTinh" id="selectGioiTinh" class="form-select form-select-sm">
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
                     </select>
                 </div>
                 <div class="col-md-4">
@@ -42,10 +43,24 @@
                     <input asp-for="Email" class="form-control form-control-sm" />
                 </div>
                 <div class="col-md-6">
-                    <label asp-for="PhongId" class="form-label fw-semibold small">Phòng</label>
-                    <select asp-for="PhongId" asp-items="ViewBag.Phongs" class="form-select form-select-sm">
+                    <label asp-for="PhongId" class="form-label fw-semibold small">
+                        Phòng <span id="badgeGioiTinh" class="badge ms-1">@Model.GioiTinh</span>
+                    </label>
+                    <select id="selectPhong" name="PhongId" class="form-select form-select-sm">
                         <option value="">-- Chưa có phòng --</option>
+                        @foreach (var p in danhSachPhong)
+                        {
+                            <option value="@p.Id"
+                                    data-gioitinh="@p.GioiTinh"
+                                    data-concho="@(p.SucChua - p.SoNguoiHienTai)"
+                                    selected="@(p.Id == Model.PhongId)">
+                                @p.MaPhong — @p.GioiTinh (@(p.SucChua - p.SoNguoiHienTai) chỗ trống)
+                            </option>
+                        }
                     </select>
+                    <div id="phongWarning" class="text-danger small mt-1" style="display:none">
+                        <i class="bi bi-exclamation-triangle me-1"></i>Không có phòng phù hợp cho giới tính này.
+                    </div>
                 </div>
                 <div class="col-md-6">
                     <label asp-for="NamHoc" class="form-label fw-semibold small"></label>
@@ -83,3 +98,46 @@
         </form>
     </div>
 </div>
+
+@section Scripts {
+<script>
+    const selectGioiTinh  = document.getElementById('selectGioiTinh');
+    const selectPhong     = document.getElementById('selectPhong');
+    const badge           = document.getElementById('badgeGioiTinh');
+    const warning         = document.getElementById('phongWarning');
+    const currentPhongId  = '@Model.PhongId'; // giá trị phòng hiện tại
+
+    // Lưu toàn bộ options (trừ option đầu)
+    const allOptions = Array.from(selectPhong.options).slice(1);
+
+    function filterPhong(keepCurrentId) {
+        const gt = selectGioiTinh.value;
+        badge.textContent = gt;
+        badge.className   = 'badge ms-1 ' + (gt === 'Nam' ? 'bg-primary' : 'bg-danger');
+
+        const currentVal = selectPhong.value;
+
+        // Xóa hết options cũ
+        while (selectPhong.options.length > 1) selectPhong.remove(1);
+
+        // Thêm phòng đúng giới tính
+        const filtered = allOptions.filter(o => o.dataset.gioitinh === gt);
+        filtered.forEach(o => {
+            const clone = o.cloneNode(true);
+            selectPhong.add(clone);
+        });
+
+        // Restore giá trị đã chọn nếu vẫn còn trong danh sách mới
+        const idToRestore = keepCurrentId || currentVal;
+        const exists = filtered.some(o => String(o.value) === String(idToRestore));
+        if (exists) selectPhong.value = idToRestore;
+
+        warning.style.display = filtered.length === 0 ? 'block' : 'none';
+    }
+
+    selectGioiTinh.addEventListener('change', () => filterPhong(null));
+
+    // Khi load: filter theo giới tính hiện tại và giữ phòng đang có
+    filterPhong(currentPhongId);
+</script>
+}
