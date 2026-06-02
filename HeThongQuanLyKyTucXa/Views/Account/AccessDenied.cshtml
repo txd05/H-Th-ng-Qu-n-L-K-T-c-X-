@@ -8,12 +8,34 @@
     <meta charset="utf-8" />
     <title>403 - Không có quyền</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
 </head>
 <body class="d-flex align-items-center justify-content-center" style="min-height:100vh;background:#f0f2f5">
     <div class="text-center">
+        <i class="bi bi-shield-lock text-danger" style="font-size:5rem"></i>
         <h1 class="display-1 text-danger fw-bold">403</h1>
-        <h4>Bạn không có quyền truy cập trang này.</h4>
-        <a href="/" class="btn btn-primary mt-3">Về trang chủ</a>
+        <h5 class="text-muted">Bạn không có quyền truy cập trang này.</h5>
+        <p class="text-muted small">Trang này chỉ dành cho Admin hoặc Nhân viên.</p>
+        <div class="d-flex gap-2 justify-content-center mt-3">
+            @if (User.IsInRole("SinhVien"))
+            {
+                <a href="/SinhVienPortal/Index" class="btn btn-primary">
+                    <i class="bi bi-house me-1"></i>Về trang sinh viên
+                </a>
+            }
+            else if (User.IsInRole("Admin") || User.IsInRole("NhanVien"))
+            {
+                <a href="/Admin/Index" class="btn btn-primary">
+                    <i class="bi bi-speedometer2 me-1"></i>Về Dashboard
+                </a>
+            }
+            else
+            {
+                <a href="/Account/Login" class="btn btn-primary">
+                    <i class="bi bi-box-arrow-in-right me-1"></i>Đăng nhập
+                </a>
+            }
+        </div>
     </div>
 </body>
 </html>

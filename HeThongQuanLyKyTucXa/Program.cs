@@ -11,9 +11,10 @@ builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 // Add services
 builder.Services.AddControllersWithViews();
 
-// Dùng SQLite để chạy trên macOS/Linux không cần SQL Server
+// Dùng SQLite — đường dẫn tuyệt đối để chạy được trên cả Mac và Windows
+var dbPath = Path.Combine(builder.Environment.ContentRootPath, "KyTucXa.db");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
+    options.UseSqlite($"Data Source={dbPath}")
            .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
