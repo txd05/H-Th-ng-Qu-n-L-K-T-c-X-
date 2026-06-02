@@ -63,12 +63,19 @@ namespace KyTucXaManagement.Controllers
             }
 
             // Đăng nhập bằng email đã resolve
-            var result = await _signInManager.PasswordSignInAsync(loginEmail, password, rememberMe, lockoutOnFailure: false);
+            // Identity dùng UserName để sign in — tìm UserName từ email trước
+            var userToLogin = await _userManager.FindByEmailAsync(loginEmail);
+            if (userToLogin == null)
+            {
+                ModelState.AddModelError("", "Tài khoản hoặc mật khẩu không đúng.");
+                return View();
+            }
+
+            var result = await _signInManager.PasswordSignInAsync(userToLogin.UserName!, password, rememberMe, lockoutOnFailure: false);
 
             if (result.Succeeded)
             {
-                var user = await _userManager.FindByEmailAsync(loginEmail);
-                var roles = await _userManager.GetRolesAsync(user!);
+                var roles = await _userManager.GetRolesAsync(userToLogin);
 
                 if (roles.Contains("Admin") || roles.Contains("NhanVien"))
                     return RedirectToAction("Index", "Admin");
