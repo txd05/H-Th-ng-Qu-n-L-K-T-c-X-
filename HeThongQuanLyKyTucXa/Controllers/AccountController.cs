@@ -1,5 +1,7 @@
+using KyTucXaManagement.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace KyTucXaManagement.Controllers
 {
@@ -7,11 +9,15 @@ namespace KyTucXaManagement.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly ApplicationDbContext _context;
 
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public AccountController(UserManager<IdentityUser> userManager,
+                                  SignInManager<IdentityUser> signInManager,
+                                  ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _context = context;
         }
 
         [HttpGet]
@@ -25,18 +31,43 @@ namespace KyTucXaManagement.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(string email, string password, bool rememberMe, string? returnUrl = null)
+        public async Task<IActionResult> Login(string loginInput, string password, bool rememberMe, string? returnUrl = null)
         {
-            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(loginInput) || string.IsNullOrEmpty(password))
             {
-                ModelState.AddModelError("", "Vui lòng nhập email và mật khẩu.");
+                ModelState.AddModelError("", "Vui lòng nhập tài khoản và mật khẩu.");
                 return View();
             }
 
-            var result = await _signInManager.PasswordSignInAsync(email, password, rememberMe, lockoutOnFailure: false);
+            // Tìm email thực từ loginInput (có thể là MSSV hoặc email)
+            string loginEmail = loginInput.Trim();
+
+            // Nếu không chứa @ → có thể là MSSV → tìm email từ hồ sơ sinh viên
+            if (!loginEmail.Contains('@'))
+            {
+                var sv = await _context.SinhViens
+                    .FirstOrDefaultAsync(s => s.MaSinhVien == loginEmail);
+
+                if (sv != null && !string.IsNullOrEmpty(sv.UserId))
+                {
+                    // Lấy email tài khoản từ UserId
+                    var userBySv = await _userManager.FindByIdAsync(sv.UserId);
+                    if (userBySv?.Email != null)
+                        loginEmail = userBySv.Email;
+                }
+                else
+                {
+                    // Thử dạng MSSV@ktx.edu.vn
+                    loginEmail = $"{loginInput.Trim().ToLower()}@ktx.edu.vn";
+                }
+            }
+
+            // Đăng nhập bằng email đã resolve
+            var result = await _signInManager.PasswordSignInAsync(loginEmail, password, rememberMe, lockoutOnFailure: false);
+
             if (result.Succeeded)
             {
-                var user = await _userManager.FindByEmailAsync(email);
+                var user = await _userManager.FindByEmailAsync(loginEmail);
                 var roles = await _userManager.GetRolesAsync(user!);
 
                 if (roles.Contains("Admin") || roles.Contains("NhanVien"))
@@ -48,7 +79,14 @@ namespace KyTucXaManagement.Controllers
                 return RedirectToLocal(returnUrl) ?? RedirectToAction("Index", "Home");
             }
 
-            ModelState.AddModelError("", "Email hoặc mật khẩu không đúng.");
+            if (result.IsLockedOut)
+            {
+                ModelState.AddModelError("", "Tài khoản đã bị khóa. Vui lòng liên hệ quản lý.");
+            }
+            else
+            {
+                ModelState.AddModelError("", "Tài khoản hoặc mật khẩu không đúng.");
+            }
             return View();
         }
 

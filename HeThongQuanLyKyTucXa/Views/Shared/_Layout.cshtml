@@ -148,14 +148,21 @@
             @if (TempData["Success"] != null)
             {
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
+                    <i class="bi bi-check-circle me-2"></i>@Html.Raw(TempData["Success"])
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            @if (TempData["Warning"] != null)
+            {
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i>@Html.Raw(TempData["Warning"])
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             }
             @if (TempData["Error"] != null)
             {
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="bi bi-exclamation-circle me-2"></i>@TempData["Error"]
+                    <i class="bi bi-exclamation-circle me-2"></i>@Html.Raw(TempData["Error"])
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             }

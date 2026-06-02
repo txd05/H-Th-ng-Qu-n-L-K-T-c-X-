@@ -1,8 +1,8 @@
 using KyTucXaManagement.Data;
 using KyTucXaManagement.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace KyTucXaManagement.Controllers
@@ -11,10 +11,12 @@ namespace KyTucXaManagement.Controllers
     public class SinhVienController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public SinhVienController(ApplicationDbContext context)
+        public SinhVienController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index(string? search, string? trangThai, string? gioiTinh)
@@ -68,17 +70,52 @@ namespace KyTucXaManagement.Controllers
             if (await _context.SinhViens.AnyAsync(s => s.MaSinhVien == model.MaSinhVien))
                 ModelState.AddModelError("MaSinhVien", "Mã sinh viên đã tồn tại.");
 
+            // Kiểm tra email trùng nếu có nhập
+            if (!string.IsNullOrEmpty(model.Email) && await _userManager.FindByEmailAsync(model.Email) != null)
+                ModelState.AddModelError("Email", "Email này đã được dùng cho tài khoản khác.");
+
             if (ModelState.IsValid)
             {
                 model.NgayVaoKTX = DateTime.Now;
+
+                // ── Tự động tạo tài khoản Identity cho sinh viên ──
+                // Email đăng nhập: email SV nếu có, không thì dùng maSV@ktx.edu.vn
+                var loginEmail = !string.IsNullOrEmpty(model.Email)
+                    ? model.Email
+                    : $"{model.MaSinhVien.ToLower()}@ktx.edu.vn";
+
+                // Mật khẩu mặc định: MaSV + @Ktx123 (đủ yêu cầu: hoa, thường, số, ký tự đặc biệt)
+                var defaultPassword = $"{model.MaSinhVien}@Ktx123";
+
+                var user = new IdentityUser
+                {
+                    UserName = loginEmail,
+                    Email = loginEmail,
+                    EmailConfirmed = true
+                };
+
+                var result = await _userManager.CreateAsync(user, defaultPassword);
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(user, "SinhVien");
+                    model.UserId = user.Id;
+                    // Đồng bộ email vào hồ sơ nếu chưa có
+                    if (string.IsNullOrEmpty(model.Email))
+                        model.Email = loginEmail;
+                }
+                else
+                {
+                    // Không tạo được tài khoản → vẫn lưu hồ sơ, thông báo lỗi nhẹ
+                    TempData["Warning"] = $"Hồ sơ đã lưu nhưng không tạo được tài khoản: {string.Join(", ", result.Errors.Select(e => e.Description))}";
+                }
+
                 _context.SinhViens.Add(model);
                 await _context.SaveChangesAsync();
 
-                // Cập nhật số người trong phòng
                 if (model.PhongId.HasValue)
                     await CapNhatSoNguoiPhong(model.PhongId.Value);
 
-                TempData["Success"] = "Thêm sinh viên thành công!";
+                TempData["Success"] = $"Thêm sinh viên thành công! Tài khoản đăng nhập: <b>{loginEmail}</b> — Mật khẩu: <b>{defaultPassword}</b>";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -146,14 +183,54 @@ namespace KyTucXaManagement.Controllers
             var sv = await _context.SinhViens.FindAsync(id);
             if (sv == null) return NotFound();
 
+            // Xóa tài khoản Identity kèm theo
+            if (!string.IsNullOrEmpty(sv.UserId))
+            {
+                var user = await _userManager.FindByIdAsync(sv.UserId);
+                if (user != null) await _userManager.DeleteAsync(user);
+            }
+
             var phongId = sv.PhongId;
             _context.SinhViens.Remove(sv);
             await _context.SaveChangesAsync();
 
             if (phongId.HasValue) await CapNhatSoNguoiPhong(phongId.Value);
 
-            TempData["Success"] = "Đã xóa sinh viên.";
+            TempData["Success"] = "Đã xóa sinh viên và tài khoản đăng nhập.";
             return RedirectToAction(nameof(Index));
+        }
+
+        // POST: Reset mật khẩu sinh viên về mặc định
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetMatKhau(int id)
+        {
+            var sv = await _context.SinhViens.FindAsync(id);
+            if (sv == null) return NotFound();
+
+            if (string.IsNullOrEmpty(sv.UserId))
+            {
+                TempData["Error"] = "Sinh viên này chưa có tài khoản.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+
+            var user = await _userManager.FindByIdAsync(sv.UserId);
+            if (user == null)
+            {
+                TempData["Error"] = "Không tìm thấy tài khoản.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+
+            var newPassword = $"{sv.MaSinhVien}@Ktx123";
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+
+            if (result.Succeeded)
+                TempData["Success"] = $"Đã reset mật khẩu về: <b>{newPassword}</b>";
+            else
+                TempData["Error"] = "Reset mật khẩu thất bại.";
+
+            return RedirectToAction(nameof(Details), new { id });
         }
 
         private async Task CapNhatSoNguoiPhong(int phongId)

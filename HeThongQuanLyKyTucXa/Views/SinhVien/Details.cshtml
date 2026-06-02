@@ -44,6 +44,33 @@
                 else { <span class="text-muted">Chưa có phòng</span> }
             </div>
         </div>
+
+        <!-- Card tài khoản sinh viên -->
+        <div class="card mt-3">
+            <div class="card-header bg-white">
+                <i class="bi bi-person-lock me-2 text-warning"></i>Tài khoản đăng nhập
+            </div>
+            <div class="card-body small">
+                @if (!string.IsNullOrEmpty(Model.UserId))
+                {
+                    <div class="mb-1"><b>Email:</b> <span class="text-primary">@Model.Email</span></div>
+                    <div class="mb-2"><b>Mật khẩu mặc định:</b> <code>@(Model.MaSinhVien + "@Ktx123")</code></div>
+                    <form asp-action="ResetMatKhau" asp-route-id="@Model.Id" method="post"
+                          onsubmit="return confirm('Reset mật khẩu về mặc định?')">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-outline-warning w-100">
+                            <i class="bi bi-key me-1"></i>Reset mật khẩu
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <div class="text-muted mb-2"><i class="bi bi-exclamation-circle me-1"></i>Chưa có tài khoản</div>
+                    <small class="text-muted">Hồ sơ này chưa được liên kết tài khoản đăng nhập.</small>
+                }
+            </div>
+        </div>
+
         <div class="mt-3 d-flex gap-2">
             <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-sm flex-fill">
                 <i class="bi bi-pencil me-1"></i>Chỉnh sửa
