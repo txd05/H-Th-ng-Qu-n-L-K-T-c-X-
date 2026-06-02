@@ -15,9 +15,13 @@
             <div class="col-md-3">
                 <select name="trangThai" class="form-select form-select-sm">
                     <option value="">-- Trạng thái --</option>
-                    <option value="Chưa thanh toán" selected="@(ViewBag.TrangThai == "Chưa thanh toán")">Chưa thanh toán</option>
-                    <option value="Đã thanh toán" selected="@(ViewBag.TrangThai == "Đã thanh toán")">Đã thanh toán</option>
-                    <option value="Quá hạn" selected="@(ViewBag.TrangThai == "Quá hạn")">Quá hạn</option>
+                    @{ string tt = ViewBag.TrangThai as string ?? ""; }
+                    @if (tt == "Chưa thanh toán") { <option value="Chưa thanh toán" selected>Chưa thanh toán</option> }
+                    else { <option value="Chưa thanh toán">Chưa thanh toán</option> }
+                    @if (tt == "Đã thanh toán") { <option value="Đã thanh toán" selected>Đã thanh toán</option> }
+                    else { <option value="Đã thanh toán">Đã thanh toán</option> }
+                    @if (tt == "Quá hạn") { <option value="Quá hạn" selected>Quá hạn</option> }
+                    else { <option value="Quá hạn">Quá hạn</option> }
                 </select>
             </div>
             <div class="col-md-5 d-flex gap-2">

@@ -12,9 +12,13 @@
             <div class="col-md-3">
                 <select name="trangThai" class="form-select form-select-sm">
                     <option value="">-- Trạng thái --</option>
-                    <option value="Đang nội trú" selected="@(ViewBag.TrangThai == "Đang nội trú")">Đang nội trú</option>
-                    <option value="Đã rời KTX" selected="@(ViewBag.TrangThai == "Đã rời KTX")">Đã rời KTX</option>
-                    <option value="Tạm khóa" selected="@(ViewBag.TrangThai == "Tạm khóa")">Tạm khóa</option>
+                    @{ string svTT = ViewBag.TrangThai as string ?? ""; }
+                    @if (svTT == "Đang nội trú") { <option value="Đang nội trú" selected>Đang nội trú</option> }
+                    else { <option value="Đang nội trú">Đang nội trú</option> }
+                    @if (svTT == "Đã rời KTX") { <option value="Đã rời KTX" selected>Đã rời KTX</option> }
+                    else { <option value="Đã rời KTX">Đã rời KTX</option> }
+                    @if (svTT == "Tạm khóa") { <option value="Tạm khóa" selected>Tạm khóa</option> }
+                    else { <option value="Tạm khóa">Tạm khóa</option> }
                 </select>
             </div>
             <div class="col-md-2">

@@ -120,16 +120,16 @@ namespace KyTucXaManagement.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> XuLySuCo(int id, string nguoiSua, double chiPhiSua, string ghiChu)
+        public async Task<IActionResult> XuLySuCo(int id, string? nguoiSua, double chiPhiSua, string? ghiChu)
         {
             var sc = await _context.SuCoTaiSans.Include(s => s.TaiSan).FirstOrDefaultAsync(s => s.Id == id);
             if (sc == null) return NotFound();
 
             sc.TrangThai = "Đã xử lý";
             sc.NgaySua = DateTime.Now;
-            sc.NguoiSua = nguoiSua;
+            sc.NguoiSua = nguoiSua ?? string.Empty;
             sc.ChiPhiSua = chiPhiSua;
-            sc.GhiChu = ghiChu;
+            sc.GhiChu = ghiChu ?? string.Empty;
 
             if (sc.TaiSan != null)
                 sc.TaiSan.TinhTrang = "Bình thường";

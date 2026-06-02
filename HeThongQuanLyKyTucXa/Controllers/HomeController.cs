@@ -11,6 +11,9 @@ namespace KyTucXaManagement.Controllers
             {
                 if (User.IsInRole("Admin") || User.IsInRole("NhanVien"))
                     return RedirectToAction("Index", "Admin");
+
+                if (User.IsInRole("SinhVien"))
+                    return RedirectToAction("Index", "SinhVienPortal");
             }
             return RedirectToAction("Login", "Account");
         }

@@ -71,7 +71,7 @@ namespace KyTucXaManagement.Controllers
             if (sinhVien == null)
             {
                 TempData["Error"] = "Không tìm thấy thông tin sinh viên.";
-                return View();
+                return View(new List<DonYeuCau>());
             }
 
             var donYeuCaus = await _context.DonYeuCaus

@@ -31,7 +31,7 @@ namespace KyTucXaManagement.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(string loginInput, string password, bool rememberMe, string? returnUrl = null)
+        public async Task<IActionResult> Login(string loginInput, string password, string? rememberMe, string? returnUrl = null)
         {
             if (string.IsNullOrEmpty(loginInput) || string.IsNullOrEmpty(password))
             {
@@ -71,7 +71,7 @@ namespace KyTucXaManagement.Controllers
                 return View();
             }
 
-            var result = await _signInManager.PasswordSignInAsync(userToLogin.UserName!, password, rememberMe, lockoutOnFailure: false);
+            var result = await _signInManager.PasswordSignInAsync(userToLogin.UserName!, password, rememberMe == "on", lockoutOnFailure: false);
 
             if (result.Succeeded)
             {

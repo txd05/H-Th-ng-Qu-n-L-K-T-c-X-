@@ -9,9 +9,17 @@
             <div class="col-md-3">
                 <select name="toaNha" class="form-select form-select-sm">
                     <option value="">-- Tòa nhà --</option>
+                    @{ string toaNhaSelected = ViewBag.ToaNha as string ?? ""; }
                     @foreach (var t in ViewBag.DanhSachToaNha ?? new List<string>())
                     {
-                        <option value="@t" selected="@(ViewBag.ToaNha == t)">Tòa @t</option>
+                        if (toaNhaSelected == t)
+                        {
+                            <option value="@t" selected>Tòa @t</option>
+                        }
+                        else
+                        {
+                            <option value="@t">Tòa @t</option>
+                        }
                     }
                 </select>
             </div>
