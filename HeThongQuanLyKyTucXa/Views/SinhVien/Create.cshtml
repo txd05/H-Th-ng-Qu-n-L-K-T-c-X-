@@ -40,8 +40,13 @@
                     <span asp-validation-for="SoDienThoai" class="text-danger small"></span>
                 </div>
                 <div class="col-md-6">
-                    <label asp-for="Email" class="form-label fw-semibold small"></label>
-                    <input asp-for="Email" class="form-control form-control-sm" type="email" />
+                    <label asp-for="Email" class="form-label fw-semibold small">
+                        Email / Gmail đăng nhập
+                        <span class="text-muted fw-normal">(tùy chọn)</span>
+                    </label>
+                    <input asp-for="Email" class="form-control form-control-sm" type="email"
+                           placeholder="VD: nguyenvana@gmail.com" />
+                    <div class="form-text">Dùng để đăng nhập. Nếu không nhập sẽ dùng MSSV@ktx.edu.vn</div>
                 </div>
                 <div class="col-md-6">
                     <label asp-for="PhongId" class="form-label fw-semibold small">

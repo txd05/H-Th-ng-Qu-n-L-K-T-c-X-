@@ -74,9 +74,15 @@ namespace KyTucXaManagement.Controllers
             {
                 model.NgayVaoKTX = DateTime.Now;
 
-                // Tài khoản đăng nhập luôn dùng MSSV@ktx.edu.vn
-                var loginEmail = $"{model.MaSinhVien}@ktx.edu.vn";
+                // Email đăng nhập: dùng gmail SV nếu có, không thì dùng MSSV@ktx.edu.vn
+                var loginEmail = !string.IsNullOrEmpty(model.Email)
+                    ? model.Email.Trim()
+                    : $"{model.MaSinhVien}@ktx.edu.vn";
                 var defaultPassword = model.MaSinhVien;
+
+                // Xóa tài khoản cũ nếu email đã tồn tại (orphan)
+                var existingUser = await _userManager.FindByEmailAsync(loginEmail);
+                if (existingUser != null) await _userManager.DeleteAsync(existingUser);
 
                 var user = new IdentityUser
                 {
@@ -210,16 +216,16 @@ namespace KyTucXaManagement.Controllers
                 return RedirectToAction(nameof(Details), new { id });
             }
 
-            var loginEmail = $"{sv.MaSinhVien}@ktx.edu.vn";
+            // Dùng gmail SV nếu có, không thì MSSV@ktx.edu.vn
+            var loginEmail = !string.IsNullOrEmpty(sv.Email)
+                ? sv.Email.Trim()
+                : $"{sv.MaSinhVien}@ktx.edu.vn";
             var defaultPassword = sv.MaSinhVien;
 
-            // Kiểm tra email đã tồn tại chưa — nếu có thì xóa tài khoản cũ đó (orphan)
+            // Xóa tài khoản cũ nếu email đã tồn tại (orphan)
             var existing = await _userManager.FindByEmailAsync(loginEmail);
             if (existing != null)
-            {
-                // Tài khoản cũ bị orphan (không có UserId trong SinhVien) → xóa đi tạo lại
                 await _userManager.DeleteAsync(existing);
-            }
 
             var user = new IdentityUser
             {
