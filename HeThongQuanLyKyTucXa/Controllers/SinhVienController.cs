@@ -70,21 +70,12 @@ namespace KyTucXaManagement.Controllers
             if (await _context.SinhViens.AnyAsync(s => s.MaSinhVien == model.MaSinhVien))
                 ModelState.AddModelError("MaSinhVien", "Mã sinh viên đã tồn tại.");
 
-            // Kiểm tra email trùng nếu có nhập
-            if (!string.IsNullOrEmpty(model.Email) && await _userManager.FindByEmailAsync(model.Email) != null)
-                ModelState.AddModelError("Email", "Email này đã được dùng cho tài khoản khác.");
-
             if (ModelState.IsValid)
             {
                 model.NgayVaoKTX = DateTime.Now;
 
-                // ── Tự động tạo tài khoản Identity cho sinh viên ──
-                // Email đăng nhập: email SV nếu có, không thì dùng maSV@ktx.edu.vn
-                var loginEmail = !string.IsNullOrEmpty(model.Email)
-                    ? model.Email
-                    : $"{model.MaSinhVien.ToLower()}@ktx.edu.vn";
-
-                // Mật khẩu mặc định = MSSV (sinh viên dùng MSSV để đăng nhập)
+                // Tài khoản đăng nhập luôn dùng MSSV@ktx.edu.vn
+                var loginEmail = $"{model.MaSinhVien}@ktx.edu.vn";
                 var defaultPassword = model.MaSinhVien;
 
                 var user = new IdentityUser
@@ -219,25 +210,11 @@ namespace KyTucXaManagement.Controllers
                 return RedirectToAction(nameof(Details), new { id });
             }
 
-            var loginEmail = !string.IsNullOrEmpty(sv.Email)
-                ? sv.Email
-                : $"{sv.MaSinhVien.ToLower()}@ktx.edu.vn";
-
+            var loginEmail = $"{sv.MaSinhVien}@ktx.edu.vn";
             var defaultPassword = sv.MaSinhVien;
 
             // Kiểm tra email đã tồn tại chưa
             var existing = await _userManager.FindByEmailAsync(loginEmail);
-            if (existing != null)
-            {
-                // Email bị trùng → dùng MSSV@ktx.edu.vn
-                loginEmail = $"{sv.MaSinhVien.ToLower()}@ktx.edu.vn";
-                existing = await _userManager.FindByEmailAsync(loginEmail);
-                if (existing != null)
-                {
-                    TempData["Error"] = $"Email <b>{loginEmail}</b> đã tồn tại. Vui lòng cập nhật email khác cho sinh viên.";
-                    return RedirectToAction(nameof(Details), new { id });
-                }
-            }
 
             var user = new IdentityUser
             {

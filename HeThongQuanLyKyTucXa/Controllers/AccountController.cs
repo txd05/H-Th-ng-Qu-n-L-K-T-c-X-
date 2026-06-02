@@ -42,24 +42,16 @@ namespace KyTucXaManagement.Controllers
             // Tìm email thực từ loginInput (có thể là MSSV hoặc email)
             string loginEmail = loginInput.Trim();
 
-            // Nếu không chứa @ → có thể là MSSV → tìm email từ hồ sơ sinh viên
+            // Nếu không chứa @ → là MSSV → chuyển thành MSSV@ktx.edu.vn
             if (!loginEmail.Contains('@'))
             {
+                // Thử tìm trong DB trước (phòng khi MSSV có ký tự đặc biệt)
                 var sv = await _context.SinhViens
                     .FirstOrDefaultAsync(s => s.MaSinhVien == loginEmail);
 
-                if (sv != null && !string.IsNullOrEmpty(sv.UserId))
-                {
-                    // Lấy email tài khoản từ UserId
-                    var userBySv = await _userManager.FindByIdAsync(sv.UserId);
-                    if (userBySv?.Email != null)
-                        loginEmail = userBySv.Email;
-                }
-                else
-                {
-                    // Thử dạng MSSV@ktx.edu.vn
-                    loginEmail = $"{loginInput.Trim().ToLower()}@ktx.edu.vn";
-                }
+                loginEmail = sv != null
+                    ? $"{sv.MaSinhVien}@ktx.edu.vn"
+                    : $"{loginEmail}@ktx.edu.vn";
             }
 
             // Đăng nhập bằng email đã resolve

@@ -82,7 +82,7 @@
                         </button>
                     </form>
                     <div class="text-muted mt-2" style="font-size:0.78rem">
-                        Email: <code>@(string.IsNullOrEmpty(Model.Email) ? Model.MaSinhVien.ToLower() + "@ktx.edu.vn" : Model.Email)</code><br/>
+                        Email: <code>@(Model.MaSinhVien + "@ktx.edu.vn")</code><br/>
                         Mật khẩu: <code>@Model.MaSinhVien</code> (chính là MSSV)
                     </div>
                 }
