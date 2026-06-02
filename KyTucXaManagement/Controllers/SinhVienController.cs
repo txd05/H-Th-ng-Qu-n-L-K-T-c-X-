@@ -123,6 +123,9 @@ namespace KyTucXaManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
+            if (!User.IsInRole("Admin"))
+                return Forbid();
+
             var sv = await _context.SinhViens.FindAsync(id);
             if (sv == null) return NotFound();
 

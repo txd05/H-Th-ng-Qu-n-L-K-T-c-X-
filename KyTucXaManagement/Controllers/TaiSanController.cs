@@ -120,7 +120,7 @@ namespace KyTucXaManagement.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> XuLySuCo(int id, string nguoiSua, decimal chiPhiSua, string ghiChu)
+        public async Task<IActionResult> XuLySuCo(int id, string nguoiSua, double chiPhiSua, string ghiChu)
         {
             var sc = await _context.SuCoTaiSans.Include(s => s.TaiSan).FirstOrDefaultAsync(s => s.Id == id);
             if (sc == null) return NotFound();

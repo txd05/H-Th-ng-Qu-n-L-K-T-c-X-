@@ -6,6 +6,11 @@ obj/
 *.suo
 .DS_Store
 
+## SQLite database files
+*.db
+*.db-shm
+*.db-wal
+
 ## User secrets
 **/secrets.json
 **/appsettings.Development.json

@@ -33,7 +33,7 @@ namespace KyTucXaManagement.Data
                 await userManager.AddToRoleAsync(admin, "Admin");
             }
 
-            // Tạo tài khoản Nhân viên
+            // Tạo tài khoản Nhân viên 1
             var nvEmail = "nhanvien@ktx.edu.vn";
             if (await userManager.FindByEmailAsync(nvEmail) == null)
             {
@@ -45,6 +45,20 @@ namespace KyTucXaManagement.Data
                 };
                 await userManager.CreateAsync(nv, "NhanVien@123");
                 await userManager.AddToRoleAsync(nv, "NhanVien");
+            }
+
+            // Tạo tài khoản Nhân viên 2 (mới)
+            var nv2Email = "nv.tran@ktx.edu.vn";
+            if (await userManager.FindByEmailAsync(nv2Email) == null)
+            {
+                var nv2 = new IdentityUser
+                {
+                    UserName = nv2Email,
+                    Email = nv2Email,
+                    EmailConfirmed = true
+                };
+                await userManager.CreateAsync(nv2, "NhanVien2@123");
+                await userManager.AddToRoleAsync(nv2, "NhanVien");
             }
 
             // Seed phòng mẫu nếu chưa có

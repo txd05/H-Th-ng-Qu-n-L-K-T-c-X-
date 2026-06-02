@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace KyTucXaManagement.Models
 {
@@ -27,9 +26,8 @@ namespace KyTucXaManagement.Models
         [Display(Name = "Tình trạng")]
         public string TinhTrang { get; set; } = "Bình thường";
 
-        [Column(TypeName = "decimal(18,2)")]
         [Display(Name = "Giá trị")]
-        public decimal GiaTri { get; set; }
+        public double GiaTri { get; set; }
 
         [DataType(DataType.Date)]
         [Display(Name = "Ngày nhập")]
@@ -70,9 +68,8 @@ namespace KyTucXaManagement.Models
         [Display(Name = "Ngày sửa")]
         public DateTime? NgaySua { get; set; }
 
-        [Column(TypeName = "decimal(18,2)")]
         [Display(Name = "Chi phí sửa")]
-        public decimal? ChiPhiSua { get; set; }
+        public double? ChiPhiSua { get; set; }
 
         [StringLength(200)]
         [Display(Name = "Người sửa")]

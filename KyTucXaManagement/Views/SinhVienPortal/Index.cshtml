@@ -1,0 +1,244 @@
+@using KyTucXaManagement.Models
+@model SinhVien
+@{
+    ViewData["Title"] = "Thông tin của tôi";
+}
+
+@if (Model == null)
+{
+    <div class="alert alert-warning">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        Chưa có hồ sơ sinh viên liên kết với tài khoản này. Vui lòng liên hệ quản lý KTX.
+    </div>
+}
+else
+{
+    <!-- Tiêu đề chào -->
+    <div class="mb-4">
+        <h4 class="fw-bold mb-1">
+            <i class="bi bi-person-circle me-2 text-primary"></i>Xin chào, @Model.HoTen!
+        </h4>
+        <p class="text-muted small mb-0">Thông tin cá nhân và ký túc xá của bạn</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Card thông tin cá nhân -->
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <i class="bi bi-person-lines-fill me-2"></i>Thông tin cá nhân
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless table-sm mb-0">
+                        <tbody>
+                            <tr>
+                                <td class="text-muted fw-semibold" style="width:40%">Mã sinh viên</td>
+                                <td><span class="badge bg-primary fs-6">@Model.MaSinhVien</span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted fw-semibold">Họ và tên</td>
+                                <td class="fw-semibold">@Model.HoTen</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted fw-semibold">Ngày sinh</td>
+                                <td>@Model.NgaySinh.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted fw-semibold">Giới tính</td>
+                                <td>@Model.GioiTinh</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted fw-semibold">Số điện thoại</td>
+                                <td>@Model.SoDienThoai</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted fw-semibold">Email</td>
+                                <td>@(Model.Email ?? "—")</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted fw-semibold">Địa chỉ</td>
+                                <td>@(Model.DiaChi ?? "—")</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted fw-semibold">Quê quán</td>
+                                <td>@(Model.QueQuan ?? "—")</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted fw-semibold">Trạng thái</td>
+                                <td>
+                                    @{
+                                        var ttClass = Model.TrangThai switch {
+                                            "Đang nội trú" => "bg-success",
+                                            "Đã rời KTX" => "bg-secondary",
+                                            _ => "bg-warning text-dark"
+                                        };
+                                    }
+                                    <span class="badge @ttClass">@Model.TrangThai</span>
+                                </td>
+                            </tr>
+                            @if (Model.NgayVaoKTX.HasValue)
+                            {
+                                <tr>
+                                    <td class="text-muted fw-semibold">Ngày vào KTX</td>
+                                    <td>@Model.NgayVaoKTX.Value.ToString("dd/MM/yyyy")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 d-flex flex-column gap-4">
+            <!-- Card thông tin phòng -->
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <i class="bi bi-door-open me-2"></i>Thông tin phòng
+                </div>
+                <div class="card-body">
+                    @if (Model.Phong == null)
+                    {
+                        <div class="text-center text-muted py-3">
+                            <i class="bi bi-house-dash fs-2 d-block mb-2"></i>
+                            Chưa được phân phòng
+                        </div>
+                    }
+                    else
+                    {
+                        <table class="table table-borderless table-sm mb-0">
+                            <tbody>
+                                <tr>
+                                    <td class="text-muted fw-semibold" style="width:45%">Mã phòng</td>
+                                    <td><span class="badge bg-success fs-6">@Model.Phong.MaPhong</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted fw-semibold">Tòa nhà</td>
+                                    <td>@(Model.Phong.ToaNha ?? "—")</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted fw-semibold">Tầng</td>
+                                    <td>@(Model.Phong.Tang ?? "—")</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted fw-semibold">Loại phòng</td>
+                                    <td>@Model.Phong.LoaiPhong</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted fw-semibold">Giới tính</td>
+                                    <td>@Model.Phong.GioiTinh</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted fw-semibold">Giá phòng/tháng</td>
+                                    <td class="text-success fw-semibold">@Model.Phong.GiaPhong.ToString("N0") đ</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted fw-semibold">Số người</td>
+                                    <td>@Model.Phong.SoNguoiHienTai / @Model.Phong.SucChua</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+
+            <!-- Card thẻ KTX -->
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <i class="bi bi-credit-card me-2"></i>Thẻ KTX
+                </div>
+                <div class="card-body">
+                    @if (Model.TheKTX == null)
+                    {
+                        <div class="text-center text-muted py-3">
+                            <i class="bi bi-credit-card-2-back fs-2 d-block mb-2"></i>
+                            Chưa được cấp thẻ KTX
+                        </div>
+                    }
+                    else
+                    {
+                        <table class="table table-borderless table-sm mb-0">
+                            <tbody>
+                                <tr>
+                                    <td class="text-muted fw-semibold" style="width:45%">Mã thẻ</td>
+                                    <td><span class="badge bg-info fs-6">@Model.TheKTX.MaThe</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted fw-semibold">Ngày cấp</td>
+                                    <td>@Model.TheKTX.NgayCap.ToString("dd/MM/yyyy")</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted fw-semibold">Hạn sử dụng</td>
+                                    <td>@Model.TheKTX.NgayHetHan.ToString("dd/MM/yyyy")</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted fw-semibold">Trạng thái</td>
+                                    <td>
+                                        @{
+                                            var theClass = Model.TheKTX.TrangThai == "Còn hiệu lực" ? "bg-success" : "bg-danger";
+                                        }
+                                        <span class="badge @theClass">@Model.TheKTX.TrangThai</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hóa đơn gần nhất -->
+    <div class="card mt-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-receipt me-2"></i>Hóa đơn gần nhất</span>
+            <a asp-controller="SinhVienPortal" asp-action="HoaDon" class="btn btn-sm btn-outline-primary">
+                Xem tất cả <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Mã HĐ</th>
+                            <th>Tháng/Năm</th>
+                            <th>Tiền phòng</th>
+                            <th>Tiền điện</th>
+                            <th>Tiền nước</th>
+                            <th>Tổng tiền</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.HoaDons.Any())
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-3">Chưa có hóa đơn nào</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var hd in Model.HoaDons)
+                            {
+                                <tr>
+                                    <td class="small">@hd.MaHoaDon</td>
+                                    <td>@hd.Thang/@hd.Nam</td>
+                                    <td>@hd.TienPhong.ToString("N0") đ</td>
+                                    <td>@hd.TienDien.ToString("N0") đ</td>
+                                    <td>@hd.TienNuoc.ToString("N0") đ</td>
+                                    <td class="fw-semibold">@hd.TongTien.ToString("N0") đ</td>
+                                    <td>
+                                        @{
+                                            var hdClass = hd.TrangThai == "Đã thanh toán" ? "bg-success" : "bg-warning text-dark";
+                                        }
+                                        <span class="badge @hdClass small">@hd.TrangThai</span>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}

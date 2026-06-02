@@ -70,7 +70,7 @@
                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" ? "active" : "")" asp-controller="Admin" asp-action="Index">
                         <i class="bi bi-speedometer2"></i> Dashboard
                     </a>
-                    <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "ThongKe" ? "active" : "")" asp-controller="Admin" asp-action="ThongKe">
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "ThongKe" ? "active" : "")" asp-controller="Admin" asp-action="ThongKe">
                         <i class="bi bi-bar-chart-line"></i> Thống kê SV
                     </a>
 
@@ -87,11 +87,32 @@
                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "DienNuoc" ? "active" : "")" asp-controller="DienNuoc" asp-action="Index">
                         <i class="bi bi-lightning-charge"></i> Điện / Nước
                     </a>
-                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "TaiSan" ? "active" : "")" asp-controller="TaiSan" asp-action="Index">
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "TaiSan" && ViewContext.RouteData.Values["action"]?.ToString() != "SuCo" ? "active" : "")" asp-controller="TaiSan" asp-action="Index">
                         <i class="bi bi-box-seam"></i> Tài sản
                     </a>
                     <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "SuCo" ? "active" : "")" asp-controller="TaiSan" asp-action="SuCo">
                         <i class="bi bi-tools"></i> Sự cố
+                    </a>
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <div class="section-title">Hệ thống</div>
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "NhanVien" ? "active" : "")" asp-controller="NhanVien" asp-action="Index">
+                            <i class="bi bi-person-badge"></i> Quản lý Nhân viên
+                        </a>
+                    }
+                }
+                else if (User.IsInRole("SinhVien"))
+                {
+                    <div class="section-title">Sinh viên</div>
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "SinhVienPortal" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")" asp-controller="SinhVienPortal" asp-action="Index">
+                        <i class="bi bi-person-circle"></i> Thông tin của tôi
+                    </a>
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "SinhVienPortal" && ViewContext.RouteData.Values["action"]?.ToString() == "HoaDon" ? "active" : "")" asp-controller="SinhVienPortal" asp-action="HoaDon">
+                        <i class="bi bi-receipt"></i> Hóa đơn của tôi
+                    </a>
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "SinhVienPortal" && ViewContext.RouteData.Values["action"]?.ToString() == "DonYeuCau" ? "active" : "")" asp-controller="SinhVienPortal" asp-action="DonYeuCau">
+                        <i class="bi bi-envelope-paper"></i> Đơn yêu cầu
                     </a>
                 }
                 else

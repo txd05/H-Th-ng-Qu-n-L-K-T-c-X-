@@ -137,10 +137,10 @@ namespace KyTucXaManagement.Controllers
                 var chiSoDien = phong.ChiSoDiens.FirstOrDefault();
                 var chiSoNuoc = phong.ChiSoNuocs.FirstOrDefault();
 
-                decimal tienDien = chiSoDien != null ? (chiSoDien.ChiSoCuoi - chiSoDien.ChiSoDau) * chiSoDien.DonGia : 0;
-                decimal tienNuoc = chiSoNuoc != null ? (chiSoNuoc.ChiSoCuoi - chiSoNuoc.ChiSoDau) * chiSoNuoc.DonGia : 0;
-                decimal tienDienMoiNguoi = svTrongPhong.Count > 0 ? tienDien / svTrongPhong.Count : 0;
-                decimal tienNuocMoiNguoi = svTrongPhong.Count > 0 ? tienNuoc / svTrongPhong.Count : 0;
+                double tienDien = chiSoDien != null ? (chiSoDien.ChiSoCuoi - chiSoDien.ChiSoDau) * chiSoDien.DonGia : 0;
+                double tienNuoc = chiSoNuoc != null ? (chiSoNuoc.ChiSoCuoi - chiSoNuoc.ChiSoDau) * chiSoNuoc.DonGia : 0;
+                double tienDienMoiNguoi = svTrongPhong.Count > 0 ? tienDien / svTrongPhong.Count : 0;
+                double tienNuocMoiNguoi = svTrongPhong.Count > 0 ? tienNuoc / svTrongPhong.Count : 0;
 
                 foreach (var sv in svTrongPhong)
                 {

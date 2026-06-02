@@ -42,6 +42,9 @@ namespace KyTucXaManagement.Controllers
                 if (roles.Contains("Admin") || roles.Contains("NhanVien"))
                     return RedirectToAction("Index", "Admin");
 
+                if (roles.Contains("SinhVien"))
+                    return RedirectToAction("Index", "SinhVienPortal");
+
                 return RedirectToLocal(returnUrl) ?? RedirectToAction("Index", "Home");
             }
 

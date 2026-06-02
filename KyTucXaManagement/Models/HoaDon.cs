@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace KyTucXaManagement.Models
 {
@@ -17,25 +16,21 @@ namespace KyTucXaManagement.Models
         [Display(Name = "Năm")]
         public int Nam { get; set; }
 
-        [Column(TypeName = "decimal(18,2)")]
         [Display(Name = "Tiền phòng")]
-        public decimal TienPhong { get; set; }
+        public double TienPhong { get; set; }
 
-        [Column(TypeName = "decimal(18,2)")]
         [Display(Name = "Tiền điện")]
-        public decimal TienDien { get; set; }
+        public double TienDien { get; set; }
 
-        [Column(TypeName = "decimal(18,2)")]
         [Display(Name = "Tiền nước")]
-        public decimal TienNuoc { get; set; }
+        public double TienNuoc { get; set; }
 
-        [Column(TypeName = "decimal(18,2)")]
         [Display(Name = "Phí khác")]
-        public decimal PhiKhac { get; set; }
+        public double PhiKhac { get; set; }
 
-        [Column(TypeName = "decimal(18,2)")]
+        // Tổng tiền — computed, không lưu DB (được ignore trong DbContext)
         [Display(Name = "Tổng tiền")]
-        public decimal TongTien => TienPhong + TienDien + TienNuoc + PhiKhac;
+        public double TongTien => TienPhong + TienDien + TienNuoc + PhiKhac;
 
         [Display(Name = "Trạng thái")]
         public string TrangThai { get; set; } = "Chưa thanh toán";
