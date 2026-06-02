@@ -213,8 +213,13 @@ namespace KyTucXaManagement.Controllers
             var loginEmail = $"{sv.MaSinhVien}@ktx.edu.vn";
             var defaultPassword = sv.MaSinhVien;
 
-            // Kiểm tra email đã tồn tại chưa
+            // Kiểm tra email đã tồn tại chưa — nếu có thì xóa tài khoản cũ đó (orphan)
             var existing = await _userManager.FindByEmailAsync(loginEmail);
+            if (existing != null)
+            {
+                // Tài khoản cũ bị orphan (không có UserId trong SinhVien) → xóa đi tạo lại
+                await _userManager.DeleteAsync(existing);
+            }
 
             var user = new IdentityUser
             {
