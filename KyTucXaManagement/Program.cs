@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Đọc PORT từ env (Railway inject PORT tự động)
+// Railway inject PORT động — đọc từ env, fallback 8080 khi chạy local
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-builder.WebHost.UseUrls($"http://+:{port}");
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 // Add services
 builder.Services.AddControllersWithViews();

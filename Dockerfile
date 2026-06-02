@@ -1,18 +1,21 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
-WORKDIR /src
+WORKDIR /app
+
 COPY KyTucXaManagement/KyTucXaManagement.csproj KyTucXaManagement/
 RUN dotnet restore KyTucXaManagement/KyTucXaManagement.csproj
+
 COPY . .
-RUN dotnet publish KyTucXaManagement/KyTucXaManagement.csproj -c Release -o /app/publish
+RUN dotnet publish KyTucXaManagement/KyTucXaManagement.csproj -c Release -o /app/out
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /app
-COPY --from=build /app/publish .
+COPY --from=build /app/out .
 
-# SQLite db sẽ lưu trong /data khi chạy trên Railway
+# SQLite db lưu ở /data (mount volume trên Railway)
 RUN mkdir -p /data
-ENV ASPNETCORE_URLS=http://+:8080
+
+# Railway inject $PORT động — phải dùng ASPNETCORE_URLS với ${PORT}
+ENV ASPNETCORE_URLS="http://+:${PORT}"
 ENV ConnectionStrings__DefaultConnection="Data Source=/data/KyTucXa.db"
 
-EXPOSE 8080
 ENTRYPOINT ["dotnet", "KyTucXaManagement.dll"]
