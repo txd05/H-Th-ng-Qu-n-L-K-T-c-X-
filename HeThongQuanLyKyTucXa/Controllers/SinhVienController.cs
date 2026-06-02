@@ -200,6 +200,66 @@ namespace KyTucXaManagement.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // POST: Tạo tài khoản cho sinh viên đã có hồ sơ nhưng chưa có tài khoản
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TaoTaiKhoan(int id)
+        {
+            var sv = await _context.SinhViens.FindAsync(id);
+            if (sv == null) return NotFound();
+
+            // Đã có tài khoản rồi
+            if (!string.IsNullOrEmpty(sv.UserId))
+            {
+                TempData["Warning"] = "Sinh viên này đã có tài khoản đăng nhập.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+
+            var loginEmail = !string.IsNullOrEmpty(sv.Email)
+                ? sv.Email
+                : $"{sv.MaSinhVien.ToLower()}@ktx.edu.vn";
+
+            var defaultPassword = $"{sv.MaSinhVien}@Ktx123";
+
+            // Kiểm tra email đã tồn tại chưa
+            var existing = await _userManager.FindByEmailAsync(loginEmail);
+            if (existing != null)
+            {
+                // Email bị trùng → dùng MSSV@ktx.edu.vn
+                loginEmail = $"{sv.MaSinhVien.ToLower()}@ktx.edu.vn";
+                existing = await _userManager.FindByEmailAsync(loginEmail);
+                if (existing != null)
+                {
+                    TempData["Error"] = $"Email <b>{loginEmail}</b> đã tồn tại. Vui lòng cập nhật email khác cho sinh viên.";
+                    return RedirectToAction(nameof(Details), new { id });
+                }
+            }
+
+            var user = new IdentityUser
+            {
+                UserName = loginEmail,
+                Email = loginEmail,
+                EmailConfirmed = true
+            };
+
+            var result = await _userManager.CreateAsync(user, defaultPassword);
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, "SinhVien");
+                sv.UserId = user.Id;
+                if (string.IsNullOrEmpty(sv.Email)) sv.Email = loginEmail;
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = $"Tạo tài khoản thành công! Email: <b>{loginEmail}</b> — Mật khẩu: <b>{defaultPassword}</b>";
+            }
+            else
+            {
+                TempData["Error"] = "Tạo tài khoản thất bại: " + string.Join(", ", result.Errors.Select(e => e.Description));
+            }
+
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
         // POST: Reset mật khẩu sinh viên về mặc định
         [HttpPost]
         [ValidateAntiForgeryToken]

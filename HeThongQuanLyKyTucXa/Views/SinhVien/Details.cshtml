@@ -53,20 +53,38 @@
             <div class="card-body small">
                 @if (!string.IsNullOrEmpty(Model.UserId))
                 {
-                    <div class="mb-1"><b>Email:</b> <span class="text-primary">@Model.Email</span></div>
-                    <div class="mb-2"><b>Mật khẩu mặc định:</b> <code>@(Model.MaSinhVien + "@Ktx123")</code></div>
+                    <div class="mb-1">
+                        <i class="bi bi-check-circle-fill text-success me-1"></i>
+                        <b>Đã có tài khoản</b>
+                    </div>
+                    <div class="mb-1"><b>Email đăng nhập:</b><br/><span class="text-primary">@Model.Email</span></div>
+                    <div class="mb-1"><b>Đăng nhập bằng MSSV:</b><br/><code>@Model.MaSinhVien</code></div>
+                    <div class="mb-3"><b>Mật khẩu mặc định:</b><br/><code>@(Model.MaSinhVien + "@Ktx123")</code></div>
                     <form asp-action="ResetMatKhau" asp-route-id="@Model.Id" method="post"
                           onsubmit="return confirm('Reset mật khẩu về mặc định?')">
                         @Html.AntiForgeryToken()
                         <button type="submit" class="btn btn-sm btn-outline-warning w-100">
-                            <i class="bi bi-key me-1"></i>Reset mật khẩu
+                            <i class="bi bi-key me-1"></i>Reset mật khẩu về mặc định
                         </button>
                     </form>
                 }
                 else
                 {
-                    <div class="text-muted mb-2"><i class="bi bi-exclamation-circle me-1"></i>Chưa có tài khoản</div>
-                    <small class="text-muted">Hồ sơ này chưa được liên kết tài khoản đăng nhập.</small>
+                    <div class="text-muted mb-3">
+                        <i class="bi bi-x-circle-fill text-danger me-1"></i>
+                        Chưa có tài khoản đăng nhập
+                    </div>
+                    <form asp-action="TaoTaiKhoan" asp-route-id="@Model.Id" method="post"
+                          onsubmit="return confirm('Tạo tài khoản đăng nhập cho sinh viên này?')">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-success w-100">
+                            <i class="bi bi-person-plus me-1"></i>Tạo tài khoản ngay
+                        </button>
+                    </form>
+                    <div class="text-muted mt-2" style="font-size:0.78rem">
+                        Email: <code>@(string.IsNullOrEmpty(Model.Email) ? Model.MaSinhVien.ToLower() + "@ktx.edu.vn" : Model.Email)</code><br/>
+                        Mật khẩu: <code>@(Model.MaSinhVien + "@Ktx123")</code>
+                    </div>
                 }
             </div>
         </div>
