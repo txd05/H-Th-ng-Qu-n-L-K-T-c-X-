@@ -59,7 +59,7 @@
                     </div>
                     <div class="mb-1"><b>Email đăng nhập:</b><br/><span class="text-primary">@Model.Email</span></div>
                     <div class="mb-1"><b>Đăng nhập bằng MSSV:</b><br/><code>@Model.MaSinhVien</code></div>
-                    <div class="mb-3"><b>Mật khẩu mặc định:</b><br/><code>@(Model.MaSinhVien + "@Ktx123")</code></div>
+                    <div class="mb-3"><b>Mật khẩu mặc định:</b><br/><code>@Model.MaSinhVien</code> (chính là MSSV)</div>
                     <form asp-action="ResetMatKhau" asp-route-id="@Model.Id" method="post"
                           onsubmit="return confirm('Reset mật khẩu về mặc định?')">
                         @Html.AntiForgeryToken()
@@ -83,7 +83,7 @@
                     </form>
                     <div class="text-muted mt-2" style="font-size:0.78rem">
                         Email: <code>@(string.IsNullOrEmpty(Model.Email) ? Model.MaSinhVien.ToLower() + "@ktx.edu.vn" : Model.Email)</code><br/>
-                        Mật khẩu: <code>@(Model.MaSinhVien + "@Ktx123")</code>
+                        Mật khẩu: <code>@Model.MaSinhVien</code> (chính là MSSV)
                     </div>
                 }
             </div>

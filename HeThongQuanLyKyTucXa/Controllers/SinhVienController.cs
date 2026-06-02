@@ -84,8 +84,8 @@ namespace KyTucXaManagement.Controllers
                     ? model.Email
                     : $"{model.MaSinhVien.ToLower()}@ktx.edu.vn";
 
-                // Mật khẩu mặc định: MaSV + @Ktx123 (đủ yêu cầu: hoa, thường, số, ký tự đặc biệt)
-                var defaultPassword = $"{model.MaSinhVien}@Ktx123";
+                // Mật khẩu mặc định = MSSV (sinh viên dùng MSSV để đăng nhập)
+                var defaultPassword = model.MaSinhVien;
 
                 var user = new IdentityUser
                 {
@@ -219,7 +219,7 @@ namespace KyTucXaManagement.Controllers
                 ? sv.Email
                 : $"{sv.MaSinhVien.ToLower()}@ktx.edu.vn";
 
-            var defaultPassword = $"{sv.MaSinhVien}@Ktx123";
+            var defaultPassword = sv.MaSinhVien;
 
             // Kiểm tra email đã tồn tại chưa
             var existing = await _userManager.FindByEmailAsync(loginEmail);
@@ -281,7 +281,7 @@ namespace KyTucXaManagement.Controllers
                 return RedirectToAction(nameof(Details), new { id });
             }
 
-            var newPassword = $"{sv.MaSinhVien}@Ktx123";
+            var newPassword = sv.MaSinhVien;
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
 
