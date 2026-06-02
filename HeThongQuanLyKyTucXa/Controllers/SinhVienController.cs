@@ -115,8 +115,12 @@ namespace KyTucXaManagement.Controllers
                 if (model.PhongId.HasValue)
                     await CapNhatSoNguoiPhong(model.PhongId.Value);
 
-                TempData["Success"] = $"Thêm sinh viên thành công! Tài khoản đăng nhập: <b>{loginEmail}</b> — Mật khẩu: <b>{defaultPassword}</b>";
-                return RedirectToAction(nameof(Index));
+                TempData["Success"] = $"Thêm sinh viên <b>{model.HoTen}</b> thành công!<br/>" +
+                    $"<i class='bi bi-key me-1'></i>Tài khoản: <b>{loginEmail}</b> &nbsp;|&nbsp; " +
+                    $"Mật khẩu mặc định: <b>{defaultPassword}</b> (chính là MSSV)";
+
+                // Redirect về Details để Admin thấy ngay thông tin tài khoản
+                return RedirectToAction(nameof(Details), new { id = model.Id });
             }
 
             ViewBag.Phongs = _context.Phongs
