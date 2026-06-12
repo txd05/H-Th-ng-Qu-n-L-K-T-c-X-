@@ -3,16 +3,23 @@
     ViewData["Title"] = "Quản lý sinh viên";
 }
 
-<div class="card mb-3">
-    <div class="card-body py-2">
+<!-- Search / filter bar -->
+<div class="card mb-4">
+    <div class="card-body py-3 px-4">
         <form method="get" class="row g-2 align-items-end">
-            <div class="col-md-4">
-                <input type="text" name="search" class="form-control form-control-sm" placeholder="Tìm theo tên, mã SV..." value="@ViewBag.Search" />
+            <div class="col-12 col-md-4">
+                <label class="form-label mb-1">Tìm kiếm</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" name="search" class="form-control"
+                           placeholder="Tên, mã SV..." value="@ViewBag.Search" />
+                </div>
             </div>
-            <div class="col-md-3">
-                <select name="trangThai" class="form-select form-select-sm">
-                    <option value="">-- Trạng thái --</option>
-                    @{ string svTT = ViewBag.TrangThai as string ?? ""; }
+            <div class="col-6 col-md-2">
+                <label class="form-label mb-1">Trạng thái</label>
+                @{ string svTT = ViewBag.TrangThai as string ?? ""; }
+                <select name="trangThai" class="form-select">
+                    <option value="">Tất cả</option>
                     @if (svTT == "Đang nội trú") { <option value="Đang nội trú" selected>Đang nội trú</option> }
                     else { <option value="Đang nội trú">Đang nội trú</option> }
                     @if (svTT == "Đã rời KTX") { <option value="Đã rời KTX" selected>Đã rời KTX</option> }
@@ -21,31 +28,43 @@
                     else { <option value="Tạm khóa">Tạm khóa</option> }
                 </select>
             </div>
-            <div class="col-md-2">
-                <select name="gioiTinh" class="form-select form-select-sm">
-                    <option value="">-- Giới tính --</option>
+            <div class="col-6 col-md-2">
+                <label class="form-label mb-1">Giới tính</label>
+                <select name="gioiTinh" class="form-select">
+                    <option value="">Tất cả</option>
                     <option value="Nam">Nam</option>
                     <option value="Nữ">Nữ</option>
                 </select>
             </div>
-            <div class="col-md-3 d-flex gap-2">
-                <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search"></i> Tìm</button>
-                <a asp-action="Index" class="btn btn-outline-secondary btn-sm"><i class="bi bi-x"></i> Xóa lọc</a>
-                <a asp-action="Create" class="btn btn-success btn-sm ms-auto"><i class="bi bi-person-plus"></i> Thêm mới</a>
+            <div class="col-12 col-md-4 d-flex gap-2 align-items-end">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-search me-1"></i> Tìm
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-circle me-1"></i> Xóa lọc
+                </a>
+                <a asp-action="Create" class="btn btn-success ms-auto">
+                    <i class="bi bi-person-plus-fill me-1"></i> Thêm mới
+                </a>
             </div>
         </form>
     </div>
 </div>
 
+<!-- Table card -->
 <div class="card">
-    <div class="card-header bg-white d-flex justify-content-between">
-        <span><i class="bi bi-people me-2 text-primary"></i>Danh sách sinh viên</span>
-        <span class="badge bg-primary">@Model.Count() sinh viên</span>
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>
+            <i class="bi bi-people-fill me-2 text-primary"></i>Danh sách sinh viên
+        </span>
+        <span class="badge" style="background:#EFF6FF;color:#1E40AF;font-size:.8rem;padding:5px 12px;border-radius:20px">
+            @Model.Count() sinh viên
+        </span>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover mb-0">
-                <thead class="table-light">
+                <thead>
                     <tr>
                         <th>Mã SV</th>
                         <th>Họ tên</th>
@@ -62,28 +81,85 @@
                     {
                         <tr>
                             <td><code>@sv.MaSinhVien</code></td>
-                            <td><strong>@sv.HoTen</strong></td>
-                            <td>@sv.GioiTinh</td>
-                            <td>@sv.SoDienThoai</td>
-                            <td>@(sv.Phong?.MaPhong ?? "Chưa có")</td>
-                            <td class="small">@sv.NgayVaoKTX?.ToString("dd/MM/yyyy")</td>
                             <td>
-                                <span class="badge @(sv.TrangThai == "Đang nội trú" ? "bg-success" : "bg-secondary")">@sv.TrangThai</span>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div style="width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;color:#fff;@(sv.GioiTinh == "Nữ" ? "background:linear-gradient(135deg,#EC4899,#F43F5E)" : "background:linear-gradient(135deg,#2563EB,#1E40AF)")">
+                                        @(sv.HoTen?.Length > 0 ? sv.HoTen[0].ToString().ToUpper() : "?")
+                                    </div>
+                                    <span class="fw-semibold">@sv.HoTen</span>
+                                </div>
+                            </td>
+                            <td>
+                                @if (sv.GioiTinh == "Nam")
+                                {
+                                    <span style="color:#2563EB"><i class="bi bi-gender-male me-1"></i>Nam</span>
+                                }
+                                else
+                                {
+                                    <span style="color:#EC4899"><i class="bi bi-gender-female me-1"></i>Nữ</span>
+                                }
+                            </td>
+                            <td class="text-muted">@sv.SoDienThoai</td>
+                            <td>
+                                @if (sv.Phong != null)
+                                {
+                                    <span class="badge" style="background:#EFF6FF;color:#1E40AF">@sv.Phong.MaPhong</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">Chưa có</span>
+                                }
+                            </td>
+                            <td class="text-muted small">@sv.NgayVaoKTX?.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @if (sv.TrangThai == "Đang nội trú")
+                                {
+                                    <span class="badge" style="background:#D1FAE5;color:#065F46">
+                                        <i class="bi bi-check-circle-fill me-1"></i>Đang nội trú
+                                    </span>
+                                }
+                                else if (sv.TrangThai == "Tạm khóa")
+                                {
+                                    <span class="badge" style="background:#FEF3C7;color:#92400E">
+                                        <i class="bi bi-pause-circle-fill me-1"></i>Tạm khóa
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge" style="background:#F1F5F9;color:#475569">
+                                        <i class="bi bi-dash-circle-fill me-1"></i>@sv.TrangThai
+                                    </span>
+                                }
                             </td>
                             <td class="text-center">
-                                <a asp-action="Details" asp-route-id="@sv.Id" class="btn btn-sm btn-outline-primary" title="Chi tiết"><i class="bi bi-eye"></i></a>
-                                <a asp-action="Edit" asp-route-id="@sv.Id" class="btn btn-sm btn-outline-warning" title="Sửa"><i class="bi bi-pencil"></i></a>
-                                <form asp-action="Delete" asp-route-id="@sv.Id" method="post" class="d-inline"
-                                      onsubmit="return confirm('Xóa sinh viên @sv.HoTen?')">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa"><i class="bi bi-trash"></i></button>
-                                </form>
+                                <div class="d-flex gap-1 justify-content-center">
+                                    <a asp-action="Details" asp-route-id="@sv.Id"
+                                       class="btn btn-sm btn-outline-primary" title="Chi tiết">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@sv.Id"
+                                       class="btn btn-sm btn-outline-warning" title="Sửa">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form asp-action="Delete" asp-route-id="@sv.Id" method="post" class="d-inline"
+                                          onsubmit="return confirm('Xóa sinh viên @sv.HoTen?')">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     }
                     @if (!Model.Any())
                     {
-                        <tr><td colspan="8" class="text-center py-4 text-muted">Không tìm thấy sinh viên nào.</td></tr>
+                        <tr>
+                            <td colspan="8" class="text-center py-5">
+                                <i class="bi bi-search fs-2 d-block mb-2 text-muted"></i>
+                                <span class="text-muted">Không tìm thấy sinh viên nào.</span>
+                            </td>
+                        </tr>
                     }
                 </tbody>
             </table>

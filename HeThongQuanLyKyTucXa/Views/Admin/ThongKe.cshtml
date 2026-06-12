@@ -3,66 +3,78 @@
     ViewData["Title"] = "Thống kê sinh viên";
 }
 
+<!-- Stat cards -->
 <div class="row g-3 mb-4">
-    <div class="col-md-2">
-        <div class="card text-center border-primary">
-            <div class="card-body py-3">
-                <div class="fw-bold text-primary fs-4">@ViewBag.TongSinhVien</div>
-                <div class="small text-muted">Tổng cộng</div>
+    <div class="col-6 col-md-2">
+        <div class="card stat-card blue h-100">
+            <div class="card-body text-center py-3">
+                <i class="bi bi-people-fill mb-1" style="font-size:1.6rem;opacity:.8"></i>
+                <div class="stat-number" style="font-size:1.6rem">@ViewBag.TongSinhVien</div>
+                <div class="stat-label" style="font-size:.72rem">Tổng cộng</div>
             </div>
         </div>
     </div>
-    <div class="col-md-2">
-        <div class="card text-center border-success">
-            <div class="card-body py-3">
-                <div class="fw-bold text-success fs-4">@ViewBag.DangNoiTru</div>
-                <div class="small text-muted">Đang nội trú</div>
+    <div class="col-6 col-md-2">
+        <div class="card stat-card green h-100">
+            <div class="card-body text-center py-3">
+                <i class="bi bi-house-fill mb-1" style="font-size:1.6rem;opacity:.8"></i>
+                <div class="stat-number" style="font-size:1.6rem">@ViewBag.DangNoiTru</div>
+                <div class="stat-label" style="font-size:.72rem">Đang nội trú</div>
             </div>
         </div>
     </div>
-    <div class="col-md-2">
-        <div class="card text-center border-secondary">
-            <div class="card-body py-3">
-                <div class="fw-bold text-secondary fs-4">@ViewBag.DaRoi</div>
-                <div class="small text-muted">Đã rời KTX</div>
+    <div class="col-6 col-md-2">
+        <div class="card" style="background:linear-gradient(135deg,#64748B,#94A3B8);border:none;border-radius:16px;color:#fff">
+            <div class="card-body text-center py-3">
+                <i class="bi bi-box-arrow-right mb-1" style="font-size:1.6rem;opacity:.8"></i>
+                <div style="font-size:1.6rem;font-weight:800">@ViewBag.DaRoi</div>
+                <div style="font-size:.72rem;opacity:.85;text-transform:uppercase;letter-spacing:.3px">Đã rời KTX</div>
             </div>
         </div>
     </div>
-    <div class="col-md-2">
-        <div class="card text-center border-info">
-            <div class="card-body py-3">
-                <div class="fw-bold text-info fs-4">@ViewBag.SinhVienNam</div>
-                <div class="small text-muted">Sinh viên nam</div>
+    <div class="col-6 col-md-2">
+        <div class="card stat-card blue h-100" style="background:linear-gradient(135deg,#0EA5E9,#38BDF8)">
+            <div class="card-body text-center py-3">
+                <i class="bi bi-gender-male mb-1" style="font-size:1.6rem;opacity:.8"></i>
+                <div class="stat-number" style="font-size:1.6rem">@ViewBag.SinhVienNam</div>
+                <div class="stat-label" style="font-size:.72rem">Sinh viên nam</div>
             </div>
         </div>
     </div>
-    <div class="col-md-2">
-        <div class="card text-center border-warning">
-            <div class="card-body py-3">
-                <div class="fw-bold text-warning fs-4">@ViewBag.SinhVienNu</div>
-                <div class="small text-muted">Sinh viên nữ</div>
+    <div class="col-6 col-md-2">
+        <div class="card" style="background:linear-gradient(135deg,#EC4899,#F43F5E);border:none;border-radius:16px;color:#fff">
+            <div class="card-body text-center py-3">
+                <i class="bi bi-gender-female mb-1" style="font-size:1.6rem;opacity:.8"></i>
+                <div style="font-size:1.6rem;font-weight:800">@ViewBag.SinhVienNu</div>
+                <div style="font-size:.72rem;opacity:.85;text-transform:uppercase;letter-spacing:.3px">Sinh viên nữ</div>
             </div>
         </div>
     </div>
-    <div class="col-md-2">
-        <div class="card text-center border-danger">
-            <div class="card-body py-3">
-                <div class="fw-bold text-danger" style="font-size:1rem">@string.Format("{0:N0}đ", ViewBag.TongNo)</div>
-                <div class="small text-muted">Tổng nợ</div>
+    <div class="col-6 col-md-2">
+        <div class="card stat-card red h-100">
+            <div class="card-body text-center py-3">
+                <i class="bi bi-exclamation-triangle-fill mb-1" style="font-size:1.6rem;opacity:.8"></i>
+                <div class="stat-number" style="font-size:1.1rem">@string.Format("{0:N0}", ViewBag.TongNo)<span style="font-size:.65rem">đ</span></div>
+                <div class="stat-label" style="font-size:.72rem">Tổng nợ</div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Table -->
 <div class="card">
-    <div class="card-header bg-white d-flex justify-content-between align-items-center">
-        <span><i class="bi bi-table me-2 text-primary"></i>Danh sách toàn bộ sinh viên đã thuê phòng</span>
-        <span class="badge bg-primary">@Model.Count() sinh viên</span>
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>
+            <i class="bi bi-table me-2 text-primary"></i>Danh sách toàn bộ sinh viên đã thuê phòng
+        </span>
+        <span class="badge" style="background:#EFF6FF;color:#1E40AF;font-size:.8rem;padding:5px 12px;border-radius:20px">
+            @Model.Count() sinh viên
+        </span>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover table-striped mb-0">
-                <thead class="table-dark">
+            <table class="table table-hover mb-0">
+                <thead>
                     <tr>
                         <th>#</th>
                         <th>Mã SV</th>
@@ -72,7 +84,7 @@
                         <th>Tòa nhà</th>
                         <th>Ngày vào</th>
                         <th>Thẻ KTX</th>
-                        <th>Hóa đơn chưa TT</th>
+                        <th>HĐ chưa TT</th>
                         <th>Trạng thái</th>
                         <th></th>
                     </tr>
@@ -86,43 +98,80 @@
                         <tr>
                             <td class="text-muted small">@(i++)</td>
                             <td><code>@sv.MaSinhVien</code></td>
-                            <td><strong>@sv.HoTen</strong></td>
                             <td>
-                                <i class="bi @(sv.GioiTinh == "Nam" ? "bi-gender-male text-primary" : "bi-gender-female text-danger")"></i>
-                                @sv.GioiTinh
+                                <div class="d-flex align-items-center gap-2">
+                                    <div style="width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;color:#fff;@(sv.GioiTinh == "Nữ" ? "background:linear-gradient(135deg,#EC4899,#F43F5E)" : "background:linear-gradient(135deg,#2563EB,#1E40AF)")">
+                                        @(sv.HoTen?.Length > 0 ? sv.HoTen[0].ToString().ToUpper() : "?")
+                                    </div>
+                                    <strong>@sv.HoTen</strong>
+                                </div>
                             </td>
-                            <td>@(sv.Phong?.MaPhong ?? "<i>Chưa có</i>")</td>
-                            <td>@(sv.Phong?.ToaNha ?? "-")</td>
-                            <td class="small text-muted">@sv.NgayVaoKTX?.ToString("dd/MM/yyyy")</td>
                             <td>
-                                @if (sv.TheKTX != null)
+                                @if (sv.GioiTinh == "Nam")
                                 {
-                                    <span class="badge @(sv.TheKTX.TrangThai == "Còn hiệu lực" ? "bg-success" : "bg-danger")">
-                                        @sv.TheKTX.TrangThai
-                                    </span>
+                                    <span style="color:#2563EB"><i class="bi bi-gender-male me-1"></i>Nam</span>
                                 }
                                 else
                                 {
-                                    <span class="badge bg-light text-muted">Chưa có</span>
+                                    <span style="color:#EC4899"><i class="bi bi-gender-female me-1"></i>Nữ</span>
+                                }
+                            </td>
+                            <td>
+                                @if (sv.Phong != null)
+                                {
+                                    <span class="badge" style="background:#EFF6FF;color:#1E40AF">@sv.Phong.MaPhong</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">Chưa có</span>
+                                }
+                            </td>
+                            <td class="text-muted small">@(sv.Phong?.ToaNha ?? "—")</td>
+                            <td class="text-muted small">@sv.NgayVaoKTX?.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @if (sv.TheKTX != null)
+                                {
+                                    if (sv.TheKTX.TrangThai == "Còn hiệu lực")
+                                    {
+                                        <span class="badge" style="background:#D1FAE5;color:#065F46"><i class="bi bi-check-circle-fill me-1"></i>Còn hiệu lực</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge" style="background:#FEE2E2;color:#991B1B"><i class="bi bi-x-circle-fill me-1"></i>@sv.TheKTX.TrangThai</span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="badge" style="background:#F1F5F9;color:#94A3B8">Chưa có</span>
                                 }
                             </td>
                             <td>
                                 @if (hdChuaTT > 0)
                                 {
-                                    <span class="badge bg-warning text-dark">@hdChuaTT HĐ | @string.Format("{0:N0}đ", tongNo)</span>
+                                    <span class="badge" style="background:#FEF3C7;color:#92400E">@hdChuaTT HĐ · @string.Format("{0:N0}", tongNo)đ</span>
                                 }
                                 else
                                 {
-                                    <span class="text-success small"><i class="bi bi-check-circle"></i> Đã thanh toán</span>
+                                    <span style="color:#059669;font-size:.82rem"><i class="bi bi-check-circle-fill me-1"></i>Đã thanh toán</span>
                                 }
                             </td>
                             <td>
-                                <span class="badge @(sv.TrangThai == "Đang nội trú" ? "bg-success" : sv.TrangThai == "Đã rời KTX" ? "bg-secondary" : "bg-warning text-dark")">
-                                    @sv.TrangThai
-                                </span>
+                                @if (sv.TrangThai == "Đang nội trú")
+                                {
+                                    <span class="badge" style="background:#D1FAE5;color:#065F46">Đang nội trú</span>
+                                }
+                                else if (sv.TrangThai == "Đã rời KTX")
+                                {
+                                    <span class="badge" style="background:#F1F5F9;color:#475569">Đã rời KTX</span>
+                                }
+                                else
+                                {
+                                    <span class="badge" style="background:#FEF3C7;color:#92400E">@sv.TrangThai</span>
+                                }
                             </td>
                             <td>
-                                <a asp-controller="SinhVien" asp-action="Details" asp-route-id="@sv.Id" class="btn btn-sm btn-outline-primary">
+                                <a asp-controller="SinhVien" asp-action="Details" asp-route-id="@sv.Id"
+                                   class="btn btn-sm btn-outline-primary">
                                     <i class="bi bi-eye"></i>
                                 </a>
                             </td>

@@ -3,12 +3,14 @@
     ViewData["Title"] = "Quản lý phòng";
 }
 
-<div class="card mb-3">
-    <div class="card-body py-2">
+<!-- Filter bar -->
+<div class="card mb-4">
+    <div class="card-body py-3 px-4">
         <form method="get" class="row g-2 align-items-end">
-            <div class="col-md-3">
-                <select name="toaNha" class="form-select form-select-sm">
-                    <option value="">-- Tòa nhà --</option>
+            <div class="col-6 col-md-3">
+                <label class="form-label mb-1">Tòa nhà</label>
+                <select name="toaNha" class="form-select">
+                    <option value="">Tất cả tòa</option>
                     @{ string toaNhaSelected = ViewBag.ToaNha as string ?? ""; }
                     @foreach (var t in ViewBag.DanhSachToaNha ?? new List<string>())
                     {
@@ -23,55 +25,130 @@
                     }
                 </select>
             </div>
-            <div class="col-md-3">
-                <select name="trangThai" class="form-select form-select-sm">
-                    <option value="">-- Trạng thái --</option>
+            <div class="col-6 col-md-3">
+                <label class="form-label mb-1">Trạng thái</label>
+                <select name="trangThai" class="form-select">
+                    <option value="">Tất cả</option>
                     <option value="Còn chỗ">Còn chỗ</option>
                     <option value="Đầy">Đầy</option>
                     <option value="Đang sửa chữa">Đang sửa chữa</option>
                     <option value="Đóng cửa">Đóng cửa</option>
                 </select>
             </div>
-            <div class="col-md-3 d-flex gap-2">
-                <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-filter"></i> Lọc</button>
-                <a asp-action="Index" class="btn btn-outline-secondary btn-sm"><i class="bi bi-x"></i></a>
-                <a asp-action="Create" class="btn btn-success btn-sm ms-auto"><i class="bi bi-plus-circle"></i> Thêm phòng</a>
+            <div class="col-12 col-md-6 d-flex gap-2 align-items-end">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-funnel-fill me-1"></i> Lọc
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-circle me-1"></i> Xóa lọc
+                </a>
+                <a asp-action="Create" class="btn btn-success ms-auto">
+                    <i class="bi bi-plus-circle-fill me-1"></i> Thêm phòng
+                </a>
             </div>
         </form>
     </div>
 </div>
 
+<!-- Room cards -->
 <div class="row g-3">
+    @if (!Model.Any())
+    {
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-door-open fs-1 d-block mb-3 text-muted"></i>
+                    <p class="text-muted">Không tìm thấy phòng nào.</p>
+                </div>
+            </div>
+        </div>
+    }
     @foreach (var p in Model)
     {
         var pct = p.SucChua > 0 ? (int)((double)p.SoNguoiHienTai / p.SucChua * 100) : 0;
-        var color = p.TrangThai == "Còn chỗ" ? "success" : p.TrangThai == "Đầy" ? "danger" : "warning";
-        <div class="col-md-4">
+        string badgeBg, badgeColor, barColor;
+        if (p.TrangThai == "Còn chỗ")       { badgeBg = "#D1FAE5"; badgeColor = "#065F46"; barColor = "#10B981"; }
+        else if (p.TrangThai == "Đầy")      { badgeBg = "#FEE2E2"; badgeColor = "#991B1B"; barColor = "#EF4444"; }
+        else                                { badgeBg = "#FEF3C7"; badgeColor = "#92400E"; barColor = "#F59E0B"; }
+
+        <div class="col-md-4 col-sm-6">
             <div class="card h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
+                <div class="card-body px-4 pb-3 pt-3">
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between align-items-start mb-3">
                         <div>
-                            <h6 class="mb-0 fw-bold">Phòng @p.MaPhong</h6>
-                            <small class="text-muted">Tòa @p.ToaNha - Tầng @p.Tang</small>
+                            <h6 class="fw-bold mb-0" style="font-size:1rem">
+                                <i class="bi bi-door-open-fill me-1 text-primary"></i>Phòng @p.MaPhong
+                            </h6>
+                            <small class="text-muted">
+                                <i class="bi bi-building me-1"></i>Tòa @p.ToaNha · Tầng @p.Tang
+                            </small>
                         </div>
-                        <span class="badge bg-@color">@p.TrangThai</span>
+                        <span class="badge" style="background:@badgeBg;color:@badgeColor">@p.TrangThai</span>
                     </div>
-                    <div class="row g-1 small mb-2">
-                        <div class="col-6"><i class="bi bi-people me-1 text-muted"></i>@p.SoNguoiHienTai/@p.SucChua người</div>
-                        <div class="col-6"><i class="bi bi-gender-ambiguous me-1 text-muted"></i>@p.GioiTinh</div>
-                        <div class="col-6"><i class="bi bi-tag me-1 text-muted"></i>@p.LoaiPhong</div>
-                        <div class="col-6"><i class="bi bi-cash me-1 text-muted"></i>@string.Format("{0:N0}", p.GiaPhong)đ</div>
+
+                    <!-- Details grid -->
+                    <div class="row g-2 mb-3 small">
+                        <div class="col-6">
+                            <div style="background:#F8FAFC;border-radius:10px;padding:8px 10px">
+                                <div class="text-muted" style="font-size:.7rem;font-weight:600;letter-spacing:.3px">LOẠI PHÒNG</div>
+                                <div class="fw-semibold">@p.LoaiPhong</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div style="background:#F8FAFC;border-radius:10px;padding:8px 10px">
+                                <div class="text-muted" style="font-size:.7rem;font-weight:600;letter-spacing:.3px">GIỚI TÍNH</div>
+                                <div class="fw-semibold">
+                                    @if (p.GioiTinh == "Nam")
+                                    {
+                                        <span style="color:#2563EB"><i class="bi bi-gender-male me-1"></i>Nam</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="color:#EC4899"><i class="bi bi-gender-female me-1"></i>Nữ</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div style="background:#F8FAFC;border-radius:10px;padding:8px 10px">
+                                <div class="text-muted" style="font-size:.7rem;font-weight:600;letter-spacing:.3px">GIÁ/THÁNG</div>
+                                <div class="fw-bold" style="color:#059669">@string.Format("{0:N0}", p.GiaPhong)đ</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div style="background:#F8FAFC;border-radius:10px;padding:8px 10px">
+                                <div class="text-muted" style="font-size:.7rem;font-weight:600;letter-spacing:.3px">SỐ NGƯỜI</div>
+                                <div class="fw-semibold">@p.SoNguoiHienTai / @p.SucChua</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="progress mb-3" style="height:6px">
-                        <div class="progress-bar bg-@color" style="width:@pct%"></div>
+
+                    <!-- Progress -->
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span class="text-muted">Sức chứa</span>
+                            <span class="fw-semibold">@pct%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" style="width:@pct%;background:@barColor"></div>
+                        </div>
                     </div>
-                    <div class="d-flex gap-1">
-                        <a asp-action="Details" asp-route-id="@p.Id" class="btn btn-sm btn-outline-primary flex-fill"><i class="bi bi-eye"></i></a>
-                        <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-sm btn-outline-warning flex-fill"><i class="bi bi-pencil"></i></a>
-                        <form asp-action="Delete" asp-route-id="@p.Id" method="post" class="flex-fill"
+
+                    <!-- Actions -->
+                    <div class="d-flex gap-2">
+                        <a asp-action="Details" asp-route-id="@p.Id" class="btn btn-sm btn-outline-primary flex-fill">
+                            <i class="bi bi-eye me-1"></i>Chi tiết
+                        </a>
+                        <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-sm btn-outline-warning flex-fill">
+                            <i class="bi bi-pencil me-1"></i>Sửa
+                        </a>
+                        <form asp-action="Delete" asp-route-id="@p.Id" method="post"
                               onsubmit="return confirm('Xóa phòng @p.MaPhong?')">
                             @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-sm btn-outline-danger w-100"><i class="bi bi-trash"></i></button>
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i>
+                            </button>
                         </form>
                     </div>
                 </div>

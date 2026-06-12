@@ -7,180 +7,209 @@
 @if (Model == null)
 {
     <div class="alert alert-warning">
-        <i class="bi bi-exclamation-triangle me-2"></i>
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
         Chưa có hồ sơ sinh viên liên kết với tài khoản này. Vui lòng liên hệ quản lý KTX.
     </div>
 }
 else
 {
-    <!-- Tiêu đề chào -->
-    <div class="mb-4">
-        <h4 class="fw-bold mb-1">
-            <i class="bi bi-person-circle me-2 text-primary"></i>Xin chào, @Model.HoTen!
-        </h4>
-        <p class="text-muted small mb-0">Thông tin cá nhân và ký túc xá của bạn</p>
+    <!-- Hero header -->
+    <div class="card mb-4" style="background:linear-gradient(135deg,#1E3A8A 0%,#1E40AF 50%,#2563EB 100%);border:none;border-radius:20px;overflow:hidden;position:relative">
+        <div style="position:absolute;inset:0;background:radial-gradient(circle at 80% 50%,rgba(255,255,255,.08) 0%,transparent 60%)"></div>
+        <div class="card-body px-4 py-4 position-relative">
+            <div class="d-flex align-items-center gap-4 flex-wrap">
+                <!-- Avatar -->
+                <div style="width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.15);border:3px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:800;color:#fff;flex-shrink:0;backdrop-filter:blur(4px)">
+                    @(Model.HoTen?.Length > 0 ? Model.HoTen[0].ToString().ToUpper() : "?")
+                </div>
+                <!-- Info -->
+                <div class="flex-grow-1">
+                    <div style="color:rgba(255,255,255,.65);font-size:.78rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase">Sinh viên KTX</div>
+                    <h3 class="text-white fw-bold mb-1" style="font-size:1.5rem">@Model.HoTen</h3>
+                    <div class="d-flex gap-2 flex-wrap mt-1">
+                        <span style="background:rgba(255,255,255,.12);color:#fff;padding:3px 12px;border-radius:20px;font-size:.8rem;font-weight:600;border:1px solid rgba(255,255,255,.2)">
+                            <i class="bi bi-mortarboard-fill me-1"></i>@Model.MaSinhVien
+                        </span>
+                        @{
+                            var ttStyle = Model.TrangThai switch {
+                                "Đang nội trú" => "background:rgba(16,185,129,.2);color:#D1FAE5;border:1px solid rgba(16,185,129,.3)",
+                                "Đã rời KTX"   => "background:rgba(148,163,184,.2);color:#E2E8F0;border:1px solid rgba(148,163,184,.3)",
+                                _              => "background:rgba(245,158,11,.2);color:#FEF3C7;border:1px solid rgba(245,158,11,.3)"
+                            };
+                        }
+                        <span style="@ttStyle;padding:3px 12px;border-radius:20px;font-size:.8rem;font-weight:600">
+                            @Model.TrangThai
+                        </span>
+                        @if (Model.Phong != null)
+                        {
+                            <span style="background:rgba(255,255,255,.12);color:#fff;padding:3px 12px;border-radius:20px;font-size:.8rem;font-weight:600;border:1px solid rgba(255,255,255,.2)">
+                                <i class="bi bi-door-open-fill me-1"></i>Phòng @Model.Phong.MaPhong
+                            </span>
+                        }
+                    </div>
+                </div>
+                <!-- Quick links -->
+                <div class="d-flex flex-column gap-2">
+                    <a asp-controller="SinhVienPortal" asp-action="HoaDon"
+                       class="btn btn-sm text-white" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:10px;font-size:.82rem">
+                        <i class="bi bi-receipt-cutoff me-1"></i>Hóa đơn
+                    </a>
+                    <a asp-controller="SinhVienPortal" asp-action="DonYeuCau"
+                       class="btn btn-sm text-white" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:10px;font-size:.82rem">
+                        <i class="bi bi-envelope-paper-fill me-1"></i>Đơn yêu cầu
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="row g-4">
-        <!-- Card thông tin cá nhân -->
+        <!-- Thông tin cá nhân -->
         <div class="col-md-6">
             <div class="card h-100">
-                <div class="card-header bg-primary text-white">
-                    <i class="bi bi-person-lines-fill me-2"></i>Thông tin cá nhân
+                <div class="card-header d-flex align-items-center gap-2">
+                    <div style="width:30px;height:30px;background:#EFF6FF;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#2563EB">
+                        <i class="bi bi-person-lines-fill"></i>
+                    </div>
+                    Thông tin cá nhân
                 </div>
-                <div class="card-body">
-                    <table class="table table-borderless table-sm mb-0">
-                        <tbody>
-                            <tr>
-                                <td class="text-muted fw-semibold" style="width:40%">Mã sinh viên</td>
-                                <td><span class="badge bg-primary fs-6">@Model.MaSinhVien</span></td>
-                            </tr>
-                            <tr>
-                                <td class="text-muted fw-semibold">Họ và tên</td>
-                                <td class="fw-semibold">@Model.HoTen</td>
-                            </tr>
-                            <tr>
-                                <td class="text-muted fw-semibold">Ngày sinh</td>
-                                <td>@Model.NgaySinh.ToString("dd/MM/yyyy")</td>
-                            </tr>
-                            <tr>
-                                <td class="text-muted fw-semibold">Giới tính</td>
-                                <td>@Model.GioiTinh</td>
-                            </tr>
-                            <tr>
-                                <td class="text-muted fw-semibold">Số điện thoại</td>
-                                <td>@Model.SoDienThoai</td>
-                            </tr>
-                            <tr>
-                                <td class="text-muted fw-semibold">Email</td>
-                                <td>@(Model.Email ?? "—")</td>
-                            </tr>
-                            <tr>
-                                <td class="text-muted fw-semibold">Địa chỉ</td>
-                                <td>@(Model.DiaChi ?? "—")</td>
-                            </tr>
-                            <tr>
-                                <td class="text-muted fw-semibold">Quê quán</td>
-                                <td>@(Model.QueQuan ?? "—")</td>
-                            </tr>
-                            <tr>
-                                <td class="text-muted fw-semibold">Trạng thái</td>
-                                <td>
-                                    @{
-                                        var ttClass = Model.TrangThai switch {
-                                            "Đang nội trú" => "bg-success",
-                                            "Đã rời KTX" => "bg-secondary",
-                                            _ => "bg-warning text-dark"
-                                        };
-                                    }
-                                    <span class="badge @ttClass">@Model.TrangThai</span>
-                                </td>
-                            </tr>
-                            @if (Model.NgayVaoKTX.HasValue)
+                <div class="card-body px-4">
+                    <dl class="row mb-0" style="--bs-gutter-x:.5rem;row-gap:.75rem">
+                        <dt class="col-5 text-muted fw-semibold small">Họ và tên</dt>
+                        <dd class="col-7 fw-semibold mb-0">@Model.HoTen</dd>
+
+                        <dt class="col-5 text-muted fw-semibold small">Ngày sinh</dt>
+                        <dd class="col-7 mb-0">@Model.NgaySinh.ToString("dd/MM/yyyy")</dd>
+
+                        <dt class="col-5 text-muted fw-semibold small">Giới tính</dt>
+                        <dd class="col-7 mb-0">
+                            @if (Model.GioiTinh == "Nam")
                             {
-                                <tr>
-                                    <td class="text-muted fw-semibold">Ngày vào KTX</td>
-                                    <td>@Model.NgayVaoKTX.Value.ToString("dd/MM/yyyy")</td>
-                                </tr>
+                                <span style="color:#2563EB"><i class="bi bi-gender-male me-1"></i>Nam</span>
                             }
-                        </tbody>
-                    </table>
+                            else
+                            {
+                                <span style="color:#EC4899"><i class="bi bi-gender-female me-1"></i>Nữ</span>
+                            }
+                        </dd>
+
+                        <dt class="col-5 text-muted fw-semibold small">Số điện thoại</dt>
+                        <dd class="col-7 mb-0"><i class="bi bi-telephone-fill me-1 text-muted"></i>@Model.SoDienThoai</dd>
+
+                        <dt class="col-5 text-muted fw-semibold small">Email</dt>
+                        <dd class="col-7 mb-0 text-truncate">
+                            @if (!string.IsNullOrEmpty(Model.Email))
+                            {
+                                <i class="bi bi-envelope-fill me-1 text-muted"></i>@Model.Email
+                            }
+                            else { <span class="text-muted">—</span> }
+                        </dd>
+
+                        <dt class="col-5 text-muted fw-semibold small">Địa chỉ</dt>
+                        <dd class="col-7 mb-0 small">@(Model.DiaChi ?? "—")</dd>
+
+                        <dt class="col-5 text-muted fw-semibold small">Quê quán</dt>
+                        <dd class="col-7 mb-0 small">@(Model.QueQuan ?? "—")</dd>
+
+                        @if (Model.NgayVaoKTX.HasValue)
+                        {
+                            <dt class="col-5 text-muted fw-semibold small">Ngày vào KTX</dt>
+                            <dd class="col-7 mb-0">@Model.NgayVaoKTX.Value.ToString("dd/MM/yyyy")</dd>
+                        }
+                    </dl>
                 </div>
             </div>
         </div>
 
         <div class="col-md-6 d-flex flex-column gap-4">
-            <!-- Card thông tin phòng -->
+            <!-- Thông tin phòng -->
             <div class="card">
-                <div class="card-header bg-success text-white">
-                    <i class="bi bi-door-open me-2"></i>Thông tin phòng
+                <div class="card-header d-flex align-items-center gap-2">
+                    <div style="width:30px;height:30px;background:#D1FAE5;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#059669">
+                        <i class="bi bi-door-open-fill"></i>
+                    </div>
+                    Thông tin phòng
                 </div>
-                <div class="card-body">
+                <div class="card-body px-4">
                     @if (Model.Phong == null)
                     {
-                        <div class="text-center text-muted py-3">
-                            <i class="bi bi-house-dash fs-2 d-block mb-2"></i>
-                            Chưa được phân phòng
+                        <div class="text-center py-3">
+                            <div style="width:56px;height:56px;background:#F1F5F9;border-radius:16px;display:inline-flex;align-items:center;justify-content:center;font-size:1.5rem;color:#94A3B8;margin-bottom:10px">
+                                <i class="bi bi-house-slash"></i>
+                            </div>
+                            <p class="text-muted mb-0 small">Chưa được phân phòng</p>
                         </div>
                     }
                     else
                     {
-                        <table class="table table-borderless table-sm mb-0">
-                            <tbody>
-                                <tr>
-                                    <td class="text-muted fw-semibold" style="width:45%">Mã phòng</td>
-                                    <td><span class="badge bg-success fs-6">@Model.Phong.MaPhong</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted fw-semibold">Tòa nhà</td>
-                                    <td>@(Model.Phong.ToaNha ?? "—")</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted fw-semibold">Tầng</td>
-                                    <td>@(Model.Phong.Tang ?? "—")</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted fw-semibold">Loại phòng</td>
-                                    <td>@Model.Phong.LoaiPhong</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted fw-semibold">Giới tính</td>
-                                    <td>@Model.Phong.GioiTinh</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted fw-semibold">Giá phòng/tháng</td>
-                                    <td class="text-success fw-semibold">@Model.Phong.GiaPhong.ToString("N0") đ</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted fw-semibold">Số người</td>
-                                    <td>@Model.Phong.SoNguoiHienTai / @Model.Phong.SucChua</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <dl class="row mb-0" style="--bs-gutter-x:.5rem;row-gap:.75rem">
+                            <dt class="col-5 text-muted fw-semibold small">Mã phòng</dt>
+                            <dd class="col-7 mb-0">
+                                <span class="badge" style="background:#D1FAE5;color:#065F46;font-size:.85rem">@Model.Phong.MaPhong</span>
+                            </dd>
+                            <dt class="col-5 text-muted fw-semibold small">Tòa nhà</dt>
+                            <dd class="col-7 mb-0">@(Model.Phong.ToaNha ?? "—")</dd>
+                            <dt class="col-5 text-muted fw-semibold small">Tầng</dt>
+                            <dd class="col-7 mb-0">@(Model.Phong.Tang ?? "—")</dd>
+                            <dt class="col-5 text-muted fw-semibold small">Loại phòng</dt>
+                            <dd class="col-7 mb-0">@Model.Phong.LoaiPhong</dd>
+                            <dt class="col-5 text-muted fw-semibold small">Giá/tháng</dt>
+                            <dd class="col-7 mb-0 fw-bold" style="color:#059669">@Model.Phong.GiaPhong.ToString("N0") đ</dd>
+                            <dt class="col-5 text-muted fw-semibold small">Số người</dt>
+                            <dd class="col-7 mb-0">
+                                @Model.Phong.SoNguoiHienTai / @Model.Phong.SucChua
+                                <div class="progress mt-1" style="height:5px">
+                                    @{ var roomPct = Model.Phong.SucChua > 0 ? (int)((double)Model.Phong.SoNguoiHienTai / Model.Phong.SucChua * 100) : 0; }
+                                    <div class="progress-bar" style="width:@roomPct%;background:#10B981"></div>
+                                </div>
+                            </dd>
+                        </dl>
                     }
                 </div>
             </div>
 
-            <!-- Card thẻ KTX -->
+            <!-- Thẻ KTX -->
             <div class="card">
-                <div class="card-header bg-info text-white">
-                    <i class="bi bi-credit-card me-2"></i>Thẻ KTX
+                <div class="card-header d-flex align-items-center gap-2">
+                    <div style="width:30px;height:30px;background:#DBEAFE;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#2563EB">
+                        <i class="bi bi-credit-card-2-front-fill"></i>
+                    </div>
+                    Thẻ KTX
                 </div>
-                <div class="card-body">
+                <div class="card-body px-4">
                     @if (Model.TheKTX == null)
                     {
-                        <div class="text-center text-muted py-3">
-                            <i class="bi bi-credit-card-2-back fs-2 d-block mb-2"></i>
-                            Chưa được cấp thẻ KTX
+                        <div class="text-center py-3">
+                            <div style="width:56px;height:56px;background:#F1F5F9;border-radius:16px;display:inline-flex;align-items:center;justify-content:center;font-size:1.5rem;color:#94A3B8;margin-bottom:10px">
+                                <i class="bi bi-credit-card"></i>
+                            </div>
+                            <p class="text-muted mb-0 small">Chưa được cấp thẻ KTX</p>
                         </div>
                     }
                     else
                     {
-                        <table class="table table-borderless table-sm mb-0">
-                            <tbody>
-                                <tr>
-                                    <td class="text-muted fw-semibold" style="width:45%">Mã thẻ</td>
-                                    <td><span class="badge bg-info fs-6">@Model.TheKTX.MaThe</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted fw-semibold">Ngày cấp</td>
-                                    <td>@Model.TheKTX.NgayCap.ToString("dd/MM/yyyy")</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted fw-semibold">Hạn sử dụng</td>
-                                    <td>@Model.TheKTX.NgayHetHan.ToString("dd/MM/yyyy")</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted fw-semibold">Trạng thái</td>
-                                    <td>
-                                        @{
-                                            var theClass = Model.TheKTX.TrangThai == "Còn hiệu lực" ? "bg-success" : "bg-danger";
-                                        }
-                                        <span class="badge @theClass">@Model.TheKTX.TrangThai</span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        var conHieuLuc = Model.TheKTX.TrangThai == "Còn hiệu lực";
+                        <!-- Card design -->
+                        <div style="background:@(conHieuLuc ? "linear-gradient(135deg,#2563EB,#1E40AF)" : "linear-gradient(135deg,#6B7280,#9CA3AF)");border-radius:14px;padding:18px 20px;color:#fff;margin-bottom:16px;position:relative;overflow:hidden">
+                            <div style="position:absolute;right:-20px;top:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.08)"></div>
+                            <div style="font-size:.7rem;opacity:.7;letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px">Mã thẻ</div>
+                            <div style="font-size:1.1rem;font-weight:800;letter-spacing:2px;font-family:monospace">@Model.TheKTX.MaThe</div>
+                            <div class="d-flex justify-content-between mt-3">
+                                <div>
+                                    <div style="font-size:.68rem;opacity:.7">Ngày cấp</div>
+                                    <div style="font-size:.85rem;font-weight:600">@Model.TheKTX.NgayCap.ToString("dd/MM/yyyy")</div>
+                                </div>
+                                <div>
+                                    <div style="font-size:.68rem;opacity:.7">Hạn sử dụng</div>
+                                    <div style="font-size:.85rem;font-weight:600">@Model.TheKTX.NgayHetHan.ToString("dd/MM/yyyy")</div>
+                                </div>
+                                <div>
+                                    <span style="background:@(conHieuLuc ? "rgba(16,185,129,.3)" : "rgba(239,68,68,.3)");border:1px solid @(conHieuLuc ? "rgba(16,185,129,.5)" : "rgba(239,68,68,.5)");border-radius:20px;padding:3px 10px;font-size:.75rem;font-weight:700">
+                                        @Model.TheKTX.TrangThai
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
                     }
                 </div>
             </div>
@@ -190,7 +219,9 @@ else
     <!-- Hóa đơn gần nhất -->
     <div class="card mt-4">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <span><i class="bi bi-receipt me-2"></i>Hóa đơn gần nhất</span>
+            <span>
+                <i class="bi bi-receipt-cutoff me-2 text-primary"></i>Hóa đơn gần nhất
+            </span>
             <a asp-controller="SinhVienPortal" asp-action="HoaDon" class="btn btn-sm btn-outline-primary">
                 Xem tất cả <i class="bi bi-arrow-right ms-1"></i>
             </a>
@@ -198,13 +229,13 @@ else
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
+                    <thead>
                         <tr>
                             <th>Mã HĐ</th>
                             <th>Tháng/Năm</th>
                             <th>Tiền phòng</th>
-                            <th>Tiền điện</th>
-                            <th>Tiền nước</th>
+                            <th>Điện</th>
+                            <th>Nước</th>
                             <th>Tổng tiền</th>
                             <th>Trạng thái</th>
                         </tr>
@@ -213,7 +244,10 @@ else
                         @if (!Model.HoaDons.Any())
                         {
                             <tr>
-                                <td colspan="7" class="text-center text-muted py-3">Chưa có hóa đơn nào</td>
+                                <td colspan="7" class="text-center py-4">
+                                    <i class="bi bi-receipt fs-2 d-block mb-2 text-muted"></i>
+                                    <span class="text-muted">Chưa có hóa đơn nào</span>
+                                </td>
                             </tr>
                         }
                         else
@@ -221,17 +255,25 @@ else
                             foreach (var hd in Model.HoaDons)
                             {
                                 <tr>
-                                    <td class="small">@hd.MaHoaDon</td>
-                                    <td>@hd.Thang/@hd.Nam</td>
-                                    <td>@hd.TienPhong.ToString("N0") đ</td>
-                                    <td>@hd.TienDien.ToString("N0") đ</td>
-                                    <td>@hd.TienNuoc.ToString("N0") đ</td>
-                                    <td class="fw-semibold">@hd.TongTien.ToString("N0") đ</td>
+                                    <td><code>@hd.MaHoaDon</code></td>
+                                    <td class="fw-semibold">@hd.Thang/@hd.Nam</td>
+                                    <td>@hd.TienPhong.ToString("N0")đ</td>
+                                    <td>@hd.TienDien.ToString("N0")đ</td>
+                                    <td>@hd.TienNuoc.ToString("N0")đ</td>
+                                    <td class="fw-bold" style="color:#1E40AF">@hd.TongTien.ToString("N0")đ</td>
                                     <td>
-                                        @{
-                                            var hdClass = hd.TrangThai == "Đã thanh toán" ? "bg-success" : "bg-warning text-dark";
+                                        @if (hd.TrangThai == "Đã thanh toán")
+                                        {
+                                            <span class="badge" style="background:#D1FAE5;color:#065F46">
+                                                <i class="bi bi-check-circle-fill me-1"></i>Đã thanh toán
+                                            </span>
                                         }
-                                        <span class="badge @hdClass small">@hd.TrangThai</span>
+                                        else
+                                        {
+                                            <span class="badge" style="background:#FEF3C7;color:#92400E">
+                                                <i class="bi bi-clock-fill me-1"></i>@hd.TrangThai
+                                            </span>
+                                        }
                                     </td>
                                 </tr>
                             }

@@ -4,96 +4,158 @@
     var chiSoNuocs = ViewBag.ChiSoNuocs as List<KyTucXaManagement.Models.ChiSoNuoc> ?? new();
 }
 
-<div class="card mb-3">
-    <div class="card-body py-2">
+<!-- Filter bar -->
+<div class="card mb-4">
+    <div class="card-body py-3 px-4">
         <form method="get" class="row g-2 align-items-end">
-            <div class="col-md-2">
-                <input type="number" name="thang" class="form-control form-control-sm" placeholder="Tháng" value="@ViewBag.Thang" min="1" max="12" />
+            <div class="col-6 col-md-2">
+                <label class="form-label mb-1">Tháng</label>
+                <input type="number" name="thang" class="form-control" placeholder="Tháng"
+                       value="@ViewBag.Thang" min="1" max="12" />
             </div>
-            <div class="col-md-2">
-                <input type="number" name="nam" class="form-control form-control-sm" placeholder="Năm" value="@ViewBag.Nam" />
+            <div class="col-6 col-md-2">
+                <label class="form-label mb-1">Năm</label>
+                <input type="number" name="nam" class="form-control" placeholder="Năm"
+                       value="@ViewBag.Nam" />
             </div>
-            <div class="col-md-8 d-flex gap-2">
-                <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-filter"></i> Xem</button>
-                <a asp-action="CreateDien" class="btn btn-warning btn-sm ms-auto">
-                    <i class="bi bi-lightning-charge"></i> Ghi điện
+            <div class="col-12 col-md-8 d-flex gap-2 align-items-end flex-wrap">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-funnel-fill me-1"></i> Xem
+                </button>
+                <a asp-action="CreateDien" class="btn ms-auto"
+                   style="background:linear-gradient(135deg,#D97706,#F59E0B);border:none;color:#fff;border-radius:10px;font-weight:600">
+                    <i class="bi bi-lightning-charge-fill me-1"></i> Ghi điện
                 </a>
-                <a asp-action="CreateNuoc" class="btn btn-info btn-sm text-white">
-                    <i class="bi bi-droplet"></i> Ghi nước
+                <a asp-action="CreateNuoc" class="btn"
+                   style="background:linear-gradient(135deg,#0284C7,#38BDF8);border:none;color:#fff;border-radius:10px;font-weight:600">
+                    <i class="bi bi-droplet-fill me-1"></i> Ghi nước
                 </a>
             </div>
         </form>
     </div>
 </div>
 
-<div class="row g-3">
+<div class="row g-4">
+    <!-- Điện -->
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header bg-warning text-dark d-flex justify-content-between">
-                <span><i class="bi bi-lightning-charge me-2"></i>Chỉ số điện - @ViewBag.Thang/@ViewBag.Nam</span>
-                <span class="badge bg-dark">@chiSoDiens.Count phòng</span>
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center"
+                 style="background:linear-gradient(135deg,#D97706,#F59E0B);border-radius:16px 16px 0 0;color:#fff;border:none">
+                <span>
+                    <i class="bi bi-lightning-charge-fill me-2"></i>
+                    Chỉ số điện — @ViewBag.Thang/@ViewBag.Nam
+                </span>
+                <span style="background:rgba(255,255,255,.2);color:#fff;padding:3px 10px;border-radius:20px;font-size:.78rem;font-weight:700">
+                    @chiSoDiens.Count phòng
+                </span>
             </div>
             <div class="card-body p-0">
-                <table class="table table-sm mb-0">
-                    <thead class="table-light">
-                        <tr><th>Phòng</th><th>Đầu</th><th>Cuối</th><th>Tiêu thụ</th><th>Thành tiền</th><th></th></tr>
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Phòng</th>
+                            <th>Đầu kỳ</th>
+                            <th>Cuối kỳ</th>
+                            <th>Tiêu thụ</th>
+                            <th>Thành tiền</th>
+                            <th></th>
+                        </tr>
                     </thead>
                     <tbody>
                         @foreach (var cs in chiSoDiens)
                         {
                             var tieu = cs.ChiSoCuoi - cs.ChiSoDau;
                             <tr>
-                                <td><b>@cs.Phong?.MaPhong</b></td>
-                                <td>@cs.ChiSoDau</td>
-                                <td>@cs.ChiSoCuoi</td>
-                                <td>@tieu kWh</td>
-                                <td>@string.Format("{0:N0}", tieu * cs.DonGia)đ</td>
+                                <td>
+                                    <span class="badge" style="background:#FEF3C7;color:#92400E">@cs.Phong?.MaPhong</span>
+                                </td>
+                                <td class="text-muted">@cs.ChiSoDau</td>
+                                <td class="fw-semibold">@cs.ChiSoCuoi</td>
+                                <td>
+                                    <span class="fw-bold" style="color:#D97706">@tieu <small class="text-muted fw-normal">kWh</small></span>
+                                </td>
+                                <td class="fw-semibold" style="color:#92400E">@string.Format("{0:N0}", tieu * cs.DonGia)đ</td>
                                 <td>
                                     <form asp-action="DeleteDien" asp-route-id="@cs.Id" method="post" class="d-inline"
-                                          onsubmit="return confirm('Xóa?')">
+                                          onsubmit="return confirm('Xóa chỉ số điện này?')">
                                         @Html.AntiForgeryToken()
-                                        <button class="btn btn-xs btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
                                     </form>
                                 </td>
                             </tr>
                         }
-                        @if (!chiSoDiens.Any()) { <tr><td colspan="6" class="text-center py-3 text-muted">Chưa có dữ liệu</td></tr> }
+                        @if (!chiSoDiens.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center py-4">
+                                    <i class="bi bi-lightning fs-2 d-block mb-2 text-muted"></i>
+                                    <span class="text-muted small">Chưa có dữ liệu điện</span>
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
+
+    <!-- Nước -->
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header bg-info text-white d-flex justify-content-between">
-                <span><i class="bi bi-droplet me-2"></i>Chỉ số nước - @ViewBag.Thang/@ViewBag.Nam</span>
-                <span class="badge bg-dark">@chiSoNuocs.Count phòng</span>
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center"
+                 style="background:linear-gradient(135deg,#0284C7,#38BDF8);border-radius:16px 16px 0 0;color:#fff;border:none">
+                <span>
+                    <i class="bi bi-droplet-fill me-2"></i>
+                    Chỉ số nước — @ViewBag.Thang/@ViewBag.Nam
+                </span>
+                <span style="background:rgba(255,255,255,.2);color:#fff;padding:3px 10px;border-radius:20px;font-size:.78rem;font-weight:700">
+                    @chiSoNuocs.Count phòng
+                </span>
             </div>
             <div class="card-body p-0">
-                <table class="table table-sm mb-0">
-                    <thead class="table-light">
-                        <tr><th>Phòng</th><th>Đầu</th><th>Cuối</th><th>Tiêu thụ</th><th>Thành tiền</th><th></th></tr>
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Phòng</th>
+                            <th>Đầu kỳ</th>
+                            <th>Cuối kỳ</th>
+                            <th>Tiêu thụ</th>
+                            <th>Thành tiền</th>
+                            <th></th>
+                        </tr>
                     </thead>
                     <tbody>
                         @foreach (var cs in chiSoNuocs)
                         {
                             var tieu = cs.ChiSoCuoi - cs.ChiSoDau;
                             <tr>
-                                <td><b>@cs.Phong?.MaPhong</b></td>
-                                <td>@cs.ChiSoDau</td>
-                                <td>@cs.ChiSoCuoi</td>
-                                <td>@tieu m³</td>
-                                <td>@string.Format("{0:N0}", tieu * cs.DonGia)đ</td>
+                                <td>
+                                    <span class="badge" style="background:#DBEAFE;color:#1E40AF">@cs.Phong?.MaPhong</span>
+                                </td>
+                                <td class="text-muted">@cs.ChiSoDau</td>
+                                <td class="fw-semibold">@cs.ChiSoCuoi</td>
+                                <td>
+                                    <span class="fw-bold" style="color:#0284C7">@tieu <small class="text-muted fw-normal">m³</small></span>
+                                </td>
+                                <td class="fw-semibold" style="color:#1E40AF">@string.Format("{0:N0}", tieu * cs.DonGia)đ</td>
                                 <td>
                                     <form asp-action="DeleteNuoc" asp-route-id="@cs.Id" method="post" class="d-inline"
-                                          onsubmit="return confirm('Xóa?')">
+                                          onsubmit="return confirm('Xóa chỉ số nước này?')">
                                         @Html.AntiForgeryToken()
-                                        <button class="btn btn-xs btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
                                     </form>
                                 </td>
                             </tr>
                         }
-                        @if (!chiSoNuocs.Any()) { <tr><td colspan="6" class="text-center py-3 text-muted">Chưa có dữ liệu</td></tr> }
+                        @if (!chiSoNuocs.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center py-4">
+                                    <i class="bi bi-droplet fs-2 d-block mb-2 text-muted"></i>
+                                    <span class="text-muted small">Chưa có dữ liệu nước</span>
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>

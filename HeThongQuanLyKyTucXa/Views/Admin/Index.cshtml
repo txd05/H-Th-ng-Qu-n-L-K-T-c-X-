@@ -2,111 +2,107 @@
     ViewData["Title"] = "Dashboard";
 }
 
+<!-- Stat cards row 1 -->
 <div class="row g-3 mb-4">
-    <div class="col-md-3">
+    <div class="col-6 col-md-3">
         <div class="card stat-card blue h-100">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="text-muted small">Sinh viên nội trú</div>
-                    <div class="stat-number text-primary">@ViewBag.TongSinhVien</div>
-                </div>
-                <i class="bi bi-people fs-1 text-primary opacity-25"></i>
+            <div class="card-body">
+                <div class="stat-label">Sinh viên nội trú</div>
+                <div class="stat-number">@ViewBag.TongSinhVien</div>
+                <i class="bi bi-people-fill stat-icon"></i>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-6 col-md-3">
         <div class="card stat-card green h-100">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="text-muted small">Phòng còn chỗ</div>
-                    <div class="stat-number text-success">@ViewBag.PhongConCho / @ViewBag.TongPhong</div>
-                </div>
-                <i class="bi bi-door-open fs-1 text-success opacity-25"></i>
+            <div class="card-body">
+                <div class="stat-label">Phòng còn chỗ</div>
+                <div class="stat-number" style="font-size:1.6rem">@ViewBag.PhongConCho <span style="font-size:1rem;opacity:.7">/ @ViewBag.TongPhong</span></div>
+                <i class="bi bi-door-open-fill stat-icon"></i>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-6 col-md-3">
         <div class="card stat-card orange h-100">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="text-muted small">Hóa đơn chưa TT</div>
-                    <div class="stat-number text-warning">@ViewBag.HoaDonChuaThanhToan</div>
-                </div>
-                <i class="bi bi-receipt fs-1 text-warning opacity-25"></i>
+            <div class="card-body">
+                <div class="stat-label">HĐ chưa thanh toán</div>
+                <div class="stat-number">@ViewBag.HoaDonChuaThanhToan</div>
+                <i class="bi bi-receipt-cutoff stat-icon"></i>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-6 col-md-3">
         <div class="card stat-card red h-100">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="text-muted small">Doanh thu tháng</div>
-                    <div class="stat-number text-danger" style="font-size:1.3rem">@string.Format("{0:N0}đ", ViewBag.DoanhThuThang)</div>
-                </div>
-                <i class="bi bi-cash-stack fs-1 text-danger opacity-25"></i>
+            <div class="card-body">
+                <div class="stat-label">Doanh thu tháng</div>
+                <div class="stat-number" style="font-size:1.25rem">@string.Format("{0:N0}", ViewBag.DoanhThuThang)<span style="font-size:.85rem">đ</span></div>
+                <i class="bi bi-cash-stack stat-icon"></i>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Stat cards row 2 -->
 <div class="row g-3 mb-4">
-    <div class="col-md-3">
+    <div class="col-6 col-md-3">
         <div class="card stat-card purple h-100">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="text-muted small">Sự cố chờ xử lý</div>
-                    <div class="stat-number text-purple" style="color:#6f42c1">@ViewBag.SuCoChoXuLy</div>
-                </div>
-                <i class="bi bi-tools fs-1 opacity-25" style="color:#6f42c1"></i>
+            <div class="card-body">
+                <div class="stat-label">Sự cố chờ xử lý</div>
+                <div class="stat-number">@ViewBag.SuCoChoXuLy</div>
+                <i class="bi bi-tools stat-icon"></i>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-6 col-md-3">
         <div class="card stat-card teal h-100">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="text-muted small">Đơn chờ duyệt</div>
-                    <div class="stat-number" style="color:#20c997">@ViewBag.DonChoXetDuyet</div>
-                </div>
-                <i class="bi bi-file-earmark-text fs-1 opacity-25" style="color:#20c997"></i>
+            <div class="card-body">
+                <div class="stat-label">Đơn chờ duyệt</div>
+                <div class="stat-number">@ViewBag.DonChoXetDuyet</div>
+                <i class="bi bi-file-earmark-text-fill stat-icon"></i>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card stat-card red h-100">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="text-muted small">HĐ quá hạn</div>
-                    <div class="stat-number text-danger">@ViewBag.HoaDonQuaHan</div>
-                </div>
-                <i class="bi bi-exclamation-triangle fs-1 text-danger opacity-25"></i>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card indigo h-100">
+            <div class="card-body">
+                <div class="stat-label">HĐ quá hạn</div>
+                <div class="stat-number">@ViewBag.HoaDonQuaHan</div>
+                <i class="bi bi-exclamation-triangle-fill stat-icon"></i>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card bg-primary text-white h-100" style="border-radius:12px; cursor:pointer" onclick="location.href='@Url.Action("ThongKe")'">
-            <div class="card-body d-flex align-items-center justify-content-center gap-2">
-                <i class="bi bi-bar-chart-line fs-3"></i>
+    <div class="col-6 col-md-3">
+        <div class="card h-100" style="background:linear-gradient(135deg,#2563EB,#1E40AF);border:none;cursor:pointer;border-radius:16px"
+             onclick="location.href='@Url.Action("ThongKe")'">
+            <div class="card-body d-flex align-items-center justify-content-center gap-3">
+                <i class="bi bi-bar-chart-line-fill text-white" style="font-size:2rem;opacity:.9"></i>
                 <div>
-                    <div class="fw-bold">Xem thống kê</div>
-                    <div class="small opacity-75">Toàn bộ sinh viên</div>
+                    <div class="fw-bold text-white">Xem thống kê</div>
+                    <div class="text-white small" style="opacity:.7">Toàn bộ sinh viên</div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Main content -->
 <div class="row g-3">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                <span><i class="bi bi-people me-2 text-primary"></i>Sinh viên vào gần đây</span>
-                <a asp-controller="SinhVien" asp-action="Index" class="btn btn-sm btn-outline-primary">Xem tất cả</a>
+    <!-- Recent students table -->
+    <div class="col-lg-8">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>
+                    <i class="bi bi-clock-history me-2 text-primary"></i>Sinh viên vào gần đây
+                </span>
+                <a asp-controller="SinhVien" asp-action="Index"
+                   class="btn btn-sm btn-outline-primary">
+                    Xem tất cả <i class="bi bi-arrow-right ms-1"></i>
+                </a>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead class="table-light">
+                        <thead>
                             <tr>
                                 <th>Mã SV</th>
                                 <th>Họ tên</th>
@@ -120,13 +116,36 @@
                             {
                                 <tr>
                                     <td><code>@sv.MaSinhVien</code></td>
-                                    <td>@sv.HoTen</td>
-                                    <td>@(sv.Phong?.MaPhong ?? "Chưa có")</td>
-                                    <td>@sv.NgayVaoKTX?.ToString("dd/MM/yyyy")</td>
                                     <td>
-                                        <span class="badge @(sv.TrangThai == "Đang nội trú" ? "bg-success" : "bg-secondary")">
-                                            @sv.TrangThai
-                                        </span>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#2563EB,#1E40AF);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.78rem;flex-shrink:0">
+                                                @(sv.HoTen?.Length > 0 ? sv.HoTen[0].ToString().ToUpper() : "?")
+                                            </div>
+                                            <span class="fw-semibold">@sv.HoTen</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if (sv.Phong != null)
+                                        {
+                                            <span class="badge" style="background:#EFF6FF;color:#1E40AF">@sv.Phong.MaPhong</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted small">Chưa có</span>
+                                        }
+                                    </td>
+                                    <td class="text-muted small">@sv.NgayVaoKTX?.ToString("dd/MM/yyyy")</td>
+                                    <td>
+                                        @if (sv.TrangThai == "Đang nội trú")
+                                        {
+                                            <span class="badge" style="background:#D1FAE5;color:#065F46">
+                                                <i class="bi bi-check-circle-fill me-1"></i>Đang nội trú
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge" style="background:#F1F5F9;color:#475569">@sv.TrangThai</span>
+                                        }
                                     </td>
                                 </tr>
                             }
@@ -136,41 +155,63 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+
+    <!-- Right column -->
+    <div class="col-lg-4 d-flex flex-column gap-3">
+        <!-- Stats chart -->
         <div class="card">
-            <div class="card-header bg-white">
-                <i class="bi bi-pie-chart me-2 text-success"></i>Thống kê sinh viên
+            <div class="card-header">
+                <i class="bi bi-pie-chart-fill me-2 text-success"></i>Tình trạng sinh viên
             </div>
             <div class="card-body">
                 @foreach (var item in ViewBag.ThongKeSinhVien)
                 {
                     var pct = ViewBag.TongSinhVien > 0 ? (int)((double)item.SoLuong / (double)ViewBag.TongSinhVien * 100) : 0;
-                    var color = item.TrangThai == "Đang nội trú" ? "success" : item.TrangThai == "Đã rời KTX" ? "secondary" : "warning";
+                    string barColor, textColor, bgColor;
+                    if (item.TrangThai == "Đang nội trú")
+                    {
+                        barColor = "#10B981"; textColor = "#065F46"; bgColor = "#D1FAE5";
+                    }
+                    else if (item.TrangThai == "Đã rời KTX")
+                    {
+                        barColor = "#94A3B8"; textColor = "#475569"; bgColor = "#F1F5F9";
+                    }
+                    else
+                    {
+                        barColor = "#F59E0B"; textColor = "#92400E"; bgColor = "#FEF3C7";
+                    }
                     <div class="mb-3">
-                        <div class="d-flex justify-content-between small mb-1">
-                            <span>@item.TrangThai</span>
-                            <span class="fw-semibold">@item.SoLuong</span>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="small fw-semibold" style="color:@textColor">
+                                <span class="badge me-1" style="background:@bgColor;color:@textColor">@item.TrangThai</span>
+                            </span>
+                            <span class="small fw-bold" style="color:@textColor">@item.SoLuong <span class="fw-normal text-muted">(@pct%)</span></span>
                         </div>
-                        <div class="progress" style="height:8px">
-                            <div class="progress-bar bg-@color" style="width:@pct%"></div>
+                        <div class="progress">
+                            <div class="progress-bar" style="width:@pct%;background:@barColor"></div>
                         </div>
                     </div>
                 }
             </div>
         </div>
-        <div class="card mt-3">
-            <div class="card-header bg-white"><i class="bi bi-lightning me-2 text-warning"></i>Thao tác nhanh</div>
+
+        <!-- Quick actions -->
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-lightning-charge-fill me-2 text-warning"></i>Thao tác nhanh
+            </div>
             <div class="card-body d-grid gap-2">
-                <a asp-controller="SinhVien" asp-action="Create" class="btn btn-outline-primary btn-sm">
-                    <i class="bi bi-person-plus me-1"></i> Thêm sinh viên
+                <a asp-controller="SinhVien" asp-action="Create" class="btn btn-primary btn-sm">
+                    <i class="bi bi-person-plus-fill me-1"></i> Thêm sinh viên
                 </a>
-                <a asp-controller="HoaDon" asp-action="Create" class="btn btn-outline-success btn-sm">
-                    <i class="bi bi-plus-circle me-1"></i> Tạo hóa đơn
+                <a asp-controller="HoaDon" asp-action="Create" class="btn btn-success btn-sm">
+                    <i class="bi bi-plus-circle-fill me-1"></i> Tạo hóa đơn
                 </a>
-                <a asp-controller="DienNuoc" asp-action="CreateDien" class="btn btn-outline-warning btn-sm">
-                    <i class="bi bi-lightning-charge me-1"></i> Ghi chỉ số điện
+                <a asp-controller="DienNuoc" asp-action="CreateDien" class="btn btn-sm"
+                   style="background:linear-gradient(135deg,#D97706,#F59E0B);border:none;color:#fff;border-radius:10px;font-weight:600">
+                    <i class="bi bi-lightning-charge-fill me-1"></i> Ghi chỉ số điện
                 </a>
-                <a asp-controller="TaiSan" asp-action="CreateSuCo" class="btn btn-outline-danger btn-sm">
+                <a asp-controller="TaiSan" asp-action="CreateSuCo" class="btn btn-danger btn-sm">
                     <i class="bi bi-tools me-1"></i> Báo sự cố
                 </a>
             </div>
