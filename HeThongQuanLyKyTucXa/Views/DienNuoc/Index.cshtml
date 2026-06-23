@@ -2,6 +2,7 @@
     ViewData["Title"] = "Quản lý điện / nước";
     var chiSoDiens = ViewBag.ChiSoDiens as List<KyTucXaManagement.Models.ChiSoDien> ?? new();
     var chiSoNuocs = ViewBag.ChiSoNuocs as List<KyTucXaManagement.Models.ChiSoNuoc> ?? new();
+    var soSvTheoPhong = ViewBag.SoSvTheoPhong as Dictionary<int, int> ?? new();
 }
 
 <!-- Filter bar -->
@@ -58,6 +59,8 @@
                             <th>Cuối kỳ</th>
                             <th>Tiêu thụ</th>
                             <th>Thành tiền</th>
+                            <th>Số SV</th>
+                            <th>Tiền/người</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -65,6 +68,9 @@
                         @foreach (var cs in chiSoDiens)
                         {
                             var tieu = cs.ChiSoCuoi - cs.ChiSoDau;
+                            var thanhTien = tieu * cs.DonGia;
+                            var soSv = soSvTheoPhong.ContainsKey(cs.PhongId) ? soSvTheoPhong[cs.PhongId] : 0;
+                            var tienMoiNguoi = soSv > 0 ? thanhTien / soSv : 0;
                             <tr>
                                 <td>
                                     <span class="badge" style="background:#FEF3C7;color:#92400E">@cs.Phong?.MaPhong</span>
@@ -74,7 +80,28 @@
                                 <td>
                                     <span class="fw-bold" style="color:#D97706">@tieu <small class="text-muted fw-normal">kWh</small></span>
                                 </td>
-                                <td class="fw-semibold" style="color:#92400E">@string.Format("{0:N0}", tieu * cs.DonGia)đ</td>
+                                <td class="fw-semibold" style="color:#92400E">@string.Format("{0:N0}", thanhTien)đ</td>
+                                <td>
+                                    @if (soSv > 0)
+                                    {
+                                        <span class="badge" style="background:#DBEAFE;color:#1E40AF">@soSv SV</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">—</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (soSv > 0)
+                                    {
+                                        <span class="fw-bold" style="color:#D97706">@string.Format("{0:N0}", tienMoiNguoi)đ</span>
+                                        <div class="text-muted" style="font-size:.72rem">@string.Format("{0:N0}", thanhTien)đ ÷ @soSv</div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">Chưa có SV</span>
+                                    }
+                                </td>
                                 <td>
                                     <form asp-action="DeleteDien" asp-route-id="@cs.Id" method="post" class="d-inline"
                                           onsubmit="return confirm('Xóa chỉ số điện này?')">
@@ -87,7 +114,7 @@
                         @if (!chiSoDiens.Any())
                         {
                             <tr>
-                                <td colspan="6" class="text-center py-4">
+                                <td colspan="8" class="text-center py-4">
                                     <i class="bi bi-lightning fs-2 d-block mb-2 text-muted"></i>
                                     <span class="text-muted small">Chưa có dữ liệu điện</span>
                                 </td>
@@ -121,6 +148,8 @@
                             <th>Cuối kỳ</th>
                             <th>Tiêu thụ</th>
                             <th>Thành tiền</th>
+                            <th>Số SV</th>
+                            <th>Tiền/người</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -128,6 +157,9 @@
                         @foreach (var cs in chiSoNuocs)
                         {
                             var tieu = cs.ChiSoCuoi - cs.ChiSoDau;
+                            var thanhTien = tieu * cs.DonGia;
+                            var soSv = soSvTheoPhong.ContainsKey(cs.PhongId) ? soSvTheoPhong[cs.PhongId] : 0;
+                            var tienMoiNguoi = soSv > 0 ? thanhTien / soSv : 0;
                             <tr>
                                 <td>
                                     <span class="badge" style="background:#DBEAFE;color:#1E40AF">@cs.Phong?.MaPhong</span>
@@ -137,7 +169,28 @@
                                 <td>
                                     <span class="fw-bold" style="color:#0284C7">@tieu <small class="text-muted fw-normal">m³</small></span>
                                 </td>
-                                <td class="fw-semibold" style="color:#1E40AF">@string.Format("{0:N0}", tieu * cs.DonGia)đ</td>
+                                <td class="fw-semibold" style="color:#1E40AF">@string.Format("{0:N0}", thanhTien)đ</td>
+                                <td>
+                                    @if (soSv > 0)
+                                    {
+                                        <span class="badge" style="background:#DBEAFE;color:#1E40AF">@soSv SV</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">—</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (soSv > 0)
+                                    {
+                                        <span class="fw-bold" style="color:#0284C7">@string.Format("{0:N0}", tienMoiNguoi)đ</span>
+                                        <div class="text-muted" style="font-size:.72rem">@string.Format("{0:N0}", thanhTien)đ ÷ @soSv</div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">Chưa có SV</span>
+                                    }
+                                </td>
                                 <td>
                                     <form asp-action="DeleteNuoc" asp-route-id="@cs.Id" method="post" class="d-inline"
                                           onsubmit="return confirm('Xóa chỉ số nước này?')">
@@ -150,7 +203,7 @@
                         @if (!chiSoNuocs.Any())
                         {
                             <tr>
-                                <td colspan="6" class="text-center py-4">
+                                <td colspan="8" class="text-center py-4">
                                     <i class="bi bi-droplet fs-2 d-block mb-2 text-muted"></i>
                                     <span class="text-muted small">Chưa có dữ liệu nước</span>
                                 </td>

@@ -1,0 +1,140 @@
+@{
+    ViewData["Title"] = "Thống kê doanh thu";
+    int nam = ViewBag.Nam;
+    double tongDoanhThu = ViewBag.TongDoanhThu;
+    var doanhThuTheoThang = ViewBag.DoanhThuTheoThang as IEnumerable<dynamic> ?? Enumerable.Empty<dynamic>();
+    var thongKeTrangThai = ViewBag.ThongKeTrangThai as IEnumerable<dynamic> ?? Enumerable.Empty<dynamic>();
+    var namList = ViewBag.NamList as IEnumerable<int> ?? new List<int>();
+    double maxDT = doanhThuTheoThang.Any() ? (double)doanhThuTheoThang.Max(x => (double)x.DoanhThu) : 1;
+}
+
+<!-- Bộ lọc năm -->
+<div class="d-flex gap-3 align-items-center mb-4 flex-wrap">
+    <span class="fw-bold">Năm:</span>
+    @foreach (var y in namList)
+    {
+        <a asp-action="ThongKe" asp-route-nam="@y"
+           class="btn btn-sm @(y == nam ? "btn-primary" : "btn-outline-secondary")">@y</a>
+    }
+    <a asp-action="Index" class="btn btn-sm btn-outline-secondary ms-auto">
+        <i class="bi bi-arrow-left me-1"></i>Quay lại
+    </a>
+</div>
+
+<!-- Tổng quan -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="card stat-card blue h-100">
+            <div class="card-body">
+                <div class="stat-label">Tổng doanh thu @nam</div>
+                <div class="stat-number" style="font-size:1.3rem">@string.Format("{0:N0}", tongDoanhThu)<span style="font-size:.8rem">đ</span></div>
+                <i class="bi bi-cash-stack stat-icon"></i>
+            </div>
+        </div>
+    </div>
+    @foreach (var tt in thongKeTrangThai)
+    {
+        string bg = tt.TrangThai == "Đã thanh toán" ? "green" : (tt.TrangThai == "Quá hạn" ? "red" : "orange");
+        <div class="col-6 col-md-3">
+            <div class="card stat-card @bg h-100">
+                <div class="card-body">
+                    <div class="stat-label">@tt.TrangThai</div>
+                    <div class="stat-number" style="font-size:1.3rem">@tt.SoLuong <span style="font-size:.8rem;opacity:.7">HĐ</span></div>
+                    <div style="font-size:.78rem;opacity:.8;margin-top:2px">@string.Format("{0:N0}đ", (double)tt.TongTien)</div>
+                    <i class="bi bi-receipt-cutoff stat-icon"></i>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Biểu đồ cột doanh thu theo tháng -->
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="bi bi-bar-chart-fill me-2 text-primary"></i>Doanh thu theo tháng — Năm @nam
+    </div>
+    <div class="card-body">
+        @if (!doanhThuTheoThang.Any())
+        {
+            <div class="text-center text-muted py-4">
+                <i class="bi bi-bar-chart fs-1 d-block mb-2 opacity-50"></i>
+                Chưa có dữ liệu doanh thu năm @nam
+            </div>
+        }
+        else
+        {
+            <div style="display:flex;gap:8px;align-items:flex-end;height:200px;padding:0 8px">
+                @for (int m = 1; m <= 12; m++)
+                {
+                    var data = doanhThuTheoThang.FirstOrDefault(x => (int)x.Thang == m);
+                    double dt = data != null ? (double)data.DoanhThu : 0;
+                    int pct = maxDT > 0 ? (int)(dt / maxDT * 180) : 0;
+                    bool isCurrentMonth = m == DateTime.Now.Month && nam == DateTime.Now.Year;
+                    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+                        <div style="font-size:9px;color:#64748B;font-weight:600">
+                            @(dt > 0 ? string.Format("{0:N0}", dt/1000) + "k" : "")
+                        </div>
+                        <div style="width:100%;height:@(pct)px;background:@(isCurrentMonth ? "linear-gradient(180deg,#2563EB,#1E40AF)" : (dt > 0 ? "linear-gradient(180deg,#60A5FA,#3B82F6)" : "#E2E8F0"));border-radius:6px 6px 0 0;min-height:4px;transition:all .3s" title="Tháng @m: @string.Format("{0:N0}đ", dt)"></div>
+                        <div style="font-size:10px;color:#64748B;font-weight:@(isCurrentMonth ? "700" : "400")">T@m</div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Bảng chi tiết từng tháng -->
+<div class="card">
+    <div class="card-header">
+        <i class="bi bi-table me-2 text-success"></i>Chi tiết doanh thu từng tháng
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Tháng</th>
+                        <th class="text-end">Doanh thu</th>
+                        <th class="text-end">Số hóa đơn</th>
+                        <th>Tỷ trọng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int m = 1; m <= 12; m++)
+                    {
+                        var data = doanhThuTheoThang.FirstOrDefault(x => (int)x.Thang == m);
+                        double dt = data != null ? (double)data.DoanhThu : 0;
+                        int soHD = data != null ? (int)data.SoHoaDon : 0;
+                        int pct = tongDoanhThu > 0 ? (int)(dt / tongDoanhThu * 100) : 0;
+                        <tr @(dt == 0 ? "class=text-muted" : "")>
+                            <td class="fw-semibold">Tháng @m/@nam</td>
+                            <td class="text-end fw-bold" style="@(dt > 0 ? "color:#1E40AF" : "")">
+                                @(dt > 0 ? string.Format("{0:N0}đ", dt) : "—")
+                            </td>
+                            <td class="text-end">@(soHD > 0 ? soHD.ToString() : "—")</td>
+                            <td style="min-width:120px">
+                                @if (dt > 0)
+                                {
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="progress flex-grow-1" style="height:6px">
+                                            <div class="progress-bar" style="width:@pct%;background:#2563EB"></div>
+                                        </div>
+                                        <span class="small text-muted">@pct%</span>
+                                    </div>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr style="background:#EFF6FF">
+                        <td class="fw-bold">Tổng năm @nam</td>
+                        <td class="text-end fw-bold" style="color:#1E40AF;font-size:1rem">@string.Format("{0:N0}đ", tongDoanhThu)</td>
+                        <td class="text-end fw-bold">@doanhThuTheoThang.Sum(x => (int)x.SoHoaDon)</td>
+                        <td>100%</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>

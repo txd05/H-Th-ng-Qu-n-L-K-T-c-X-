@@ -60,6 +60,34 @@ namespace KyTucXaManagement.Controllers
             return View(hoaDons);
         }
 
+        // POST: SinhVienPortal/ThanhToanHoaDon — Sinh viên xác nhận đã chuyển khoản
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ThanhToanHoaDon(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var sinhVien = await _context.SinhViens.FirstOrDefaultAsync(s => s.UserId == userId);
+            if (sinhVien == null) return Forbid();
+
+            var hd = await _context.HoaDons
+                .FirstOrDefaultAsync(h => h.Id == id && h.SinhVienId == sinhVien.Id);
+
+            if (hd == null) return NotFound();
+
+            if (hd.TrangThai == "Đã thanh toán")
+            {
+                TempData["Warning"] = "Hóa đơn này đã được thanh toán rồi.";
+                return RedirectToAction(nameof(HoaDon));
+            }
+
+            hd.TrangThai = "Đã thanh toán";
+            hd.NgayThanhToan = DateTime.Now;
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = $"Thanh toán hóa đơn <b>{hd.MaHoaDon}</b> thành công!";
+            return RedirectToAction(nameof(HoaDon));
+        }
+
         // GET: SinhVienPortal/DonYeuCau — Xem và gửi đơn yêu cầu
         public async Task<IActionResult> DonYeuCau()
         {

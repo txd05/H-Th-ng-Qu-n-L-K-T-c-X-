@@ -62,6 +62,51 @@ namespace KyTucXaManagement.Controllers
             return View();
         }
 
+        // Danh sách đơn yêu cầu
+        public async Task<IActionResult> DonYeuCau(string? trangThai)
+        {
+            var query = _context.DonYeuCaus
+                .Include(d => d.SinhVien)
+                .Include(d => d.Phong)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(trangThai))
+                query = query.Where(d => d.TrangThai == trangThai);
+
+            var dons = await query.OrderByDescending(d => d.NgayNop).ToListAsync();
+
+            ViewBag.TrangThaiFilter = trangThai;
+            ViewBag.SoChoXetDuyet = await _context.DonYeuCaus.CountAsync(d => d.TrangThai == "Chờ duyệt");
+            return View(dons);
+        }
+
+        // POST: Duyệt đơn
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DuyetDon(int id, string hanhDong, string? lyDoTuChoi)
+        {
+            var don = await _context.DonYeuCaus.FindAsync(id);
+            if (don == null) return NotFound();
+
+            don.NgayDuyet = DateTime.Now;
+            don.NguoiDuyet = User.Identity?.Name;
+
+            if (hanhDong == "duyet")
+            {
+                don.TrangThai = "Đã duyệt";
+                TempData["Success"] = $"Đã duyệt đơn <b>{don.MaDon}</b> thành công.";
+            }
+            else
+            {
+                don.TrangThai = "Từ chối";
+                don.LyDoTuChoi = lyDoTuChoi;
+                TempData["Warning"] = $"Đã từ chối đơn <b>{don.MaDon}</b>.";
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(DonYeuCau));
+        }
+
         // Thống kê toàn bộ sinh viên
         public async Task<IActionResult> ThongKe()
         {

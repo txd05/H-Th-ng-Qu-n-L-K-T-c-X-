@@ -1,0 +1,170 @@
+@model KyTucXaManagement.Models.HoaDon
+@{
+    ViewData["Title"] = "In hóa đơn";
+    Layout = null;
+    var tong = Model.TienPhong + Model.TienDien + Model.TienNuoc + Model.PhiKhac;
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <title>Hóa đơn @Model.MaHoaDon</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; color: #111; background: #fff; }
+        .page { max-width: 680px; margin: 30px auto; padding: 40px; border: 1px solid #ddd; }
+        .header { text-align: center; border-bottom: 2px solid #1E40AF; padding-bottom: 16px; margin-bottom: 20px; }
+        .header h2 { font-size: 20px; color: #1E40AF; }
+        .header p { color: #666; font-size: 12px; margin-top: 4px; }
+        .invoice-id { font-size: 18px; font-weight: bold; color: #1E40AF; margin: 16px 0 4px; }
+        .section { margin-bottom: 20px; }
+        .section-title { font-size: 11px; font-weight: 700; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 4px; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; }
+        .info-item label { font-size: 11px; color: #888; display: block; }
+        .info-item span { font-weight: 600; }
+        table { width: 100%; border-collapse: collapse; }
+        table th { background: #EFF6FF; color: #1E40AF; font-size: 11px; text-transform: uppercase; padding: 8px 12px; text-align: left; }
+        table td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; }
+        .total-row td { font-weight: bold; font-size: 15px; color: #1E40AF; border-top: 2px solid #1E40AF; border-bottom: none; }
+        .status { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .status.paid { background: #D1FAE5; color: #065F46; }
+        .status.unpaid { background: #FEF3C7; color: #92400E; }
+        .status.overdue { background: #FEE2E2; color: #991B1B; }
+        .footer { margin-top: 30px; text-align: center; color: #999; font-size: 11px; border-top: 1px solid #eee; padding-top: 16px; }
+        .sign-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; text-align: center; }
+        .sign-box { border: 1px dashed #ddd; padding: 12px; border-radius: 8px; }
+        .sign-box .title { font-size: 11px; font-weight: 700; color: #666; text-transform: uppercase; margin-bottom: 40px; }
+        @@media print {
+            body { margin: 0; }
+            .page { border: none; margin: 0; padding: 20px; max-width: 100%; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="header">
+        <h2>KÝ TÚC XÁ HUTECH</h2>
+        <p>HÓA ĐƠN TIỀN PHÒNG VÀ DỊCH VỤ</p>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px">
+        <div>
+            <div class="invoice-id">@Model.MaHoaDon</div>
+            <div style="color:#666;font-size:12px">Tháng @Model.Thang / @Model.Nam</div>
+        </div>
+        <div style="text-align:right">
+            @{
+                var isQuaHan = Model.TrangThai == "Chưa thanh toán" && Model.HanThanhToan < DateTime.Now;
+                var statusClass = Model.TrangThai == "Đã thanh toán" ? "paid" : (isQuaHan ? "overdue" : "unpaid");
+                var statusText = Model.TrangThai == "Đã thanh toán" ? "Đã thanh toán" : (isQuaHan ? "Quá hạn" : "Chưa thanh toán");
+            }
+            <span class="status @statusClass">@statusText</span>
+            <div style="color:#888;font-size:11px;margin-top:4px">Ngày lập: @Model.NgayLap.ToString("dd/MM/yyyy")</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Thông tin sinh viên</div>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>Họ và tên</label>
+                <span>@Model.SinhVien?.HoTen</span>
+            </div>
+            <div class="info-item">
+                <label>Mã sinh viên</label>
+                <span>@Model.SinhVien?.MaSinhVien</span>
+            </div>
+            <div class="info-item">
+                <label>Phòng</label>
+                <span>@(Model.Phong?.MaPhong ?? "—")</span>
+            </div>
+            <div class="info-item">
+                <label>Hạn thanh toán</label>
+                <span>@Model.HanThanhToan?.ToString("dd/MM/yyyy")</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Chi tiết thanh toán</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Khoản mục</th>
+                    <th style="text-align:right">Số tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Tiền phòng</td>
+                    <td style="text-align:right">@string.Format("{0:N0}đ", Model.TienPhong)</td>
+                </tr>
+                <tr>
+                    <td>Tiền điện</td>
+                    <td style="text-align:right">@string.Format("{0:N0}đ", Model.TienDien)</td>
+                </tr>
+                <tr>
+                    <td>Tiền nước</td>
+                    <td style="text-align:right">@string.Format("{0:N0}đ", Model.TienNuoc)</td>
+                </tr>
+                @if (Model.PhiKhac > 0)
+                {
+                    <tr>
+                        <td>Phí khác</td>
+                        <td style="text-align:right">@string.Format("{0:N0}đ", Model.PhiKhac)</td>
+                    </tr>
+                }
+                <tr class="total-row">
+                    <td>TỔNG CỘNG</td>
+                    <td style="text-align:right">@string.Format("{0:N0}đ", tong)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.GhiChu))
+    {
+        <div class="section">
+            <div class="section-title">Ghi chú</div>
+            <p style="color:#555">@Model.GhiChu</p>
+        </div>
+    }
+
+    @if (Model.TrangThai == "Đã thanh toán")
+    {
+        <div style="text-align:center;margin:20px 0">
+            <div style="display:inline-block;border:3px solid #059669;color:#059669;padding:8px 24px;border-radius:8px;font-weight:700;font-size:16px;transform:rotate(-5deg)">
+                ĐÃ THANH TOÁN<br/>
+                <span style="font-size:11px;font-weight:400">@Model.NgayThanhToan?.ToString("dd/MM/yyyy HH:mm")</span>
+            </div>
+        </div>
+    }
+
+    <div class="sign-row">
+        <div class="sign-box">
+            <div class="title">Người lập phiếu</div>
+            <div style="font-size:11px;color:#888">(Ký và ghi rõ họ tên)</div>
+        </div>
+        <div class="sign-box">
+            <div class="title">Sinh viên</div>
+            <div style="font-size:11px;color:#888">(Ký và ghi rõ họ tên)</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        Ký Túc Xá HUTECH — In ngày @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+    </div>
+</div>
+
+<!-- Nút in (ẩn khi in) -->
+<div class="no-print" style="text-align:center;margin:20px">
+    <button onclick="window.print()" style="padding:10px 28px;background:#1E40AF;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">
+        🖨️ In hóa đơn
+    </button>
+    <button onclick="window.close()" style="padding:10px 20px;margin-left:10px;background:#e5e7eb;color:#374151;border:none;border-radius:8px;font-size:14px;cursor:pointer">
+        Đóng
+    </button>
+</div>
+</body>
+</html>

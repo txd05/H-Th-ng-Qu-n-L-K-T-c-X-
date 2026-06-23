@@ -15,10 +15,10 @@ namespace KyTucXaManagement.Migrations
                 name: "AspNetRoles",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
-                    NormalizedName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "TEXT", nullable: true)
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -29,21 +29,21 @@ namespace KyTucXaManagement.Migrations
                 name: "AspNetUsers",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "TEXT", nullable: false),
-                    UserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "INTEGER", nullable: false),
-                    PasswordHash = table.Column<string>(type: "TEXT", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "TEXT", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "TEXT", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "TEXT", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "INTEGER", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "TEXT", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -54,18 +54,18 @@ namespace KyTucXaManagement.Migrations
                 name: "Phongs",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    MaPhong = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
-                    LoaiPhong = table.Column<string>(type: "TEXT", nullable: false),
-                    SucChua = table.Column<int>(type: "INTEGER", nullable: false),
-                    SoNguoiHienTai = table.Column<int>(type: "INTEGER", nullable: false),
-                    Tang = table.Column<string>(type: "TEXT", maxLength: 10, nullable: true),
-                    ToaNha = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
-                    GioiTinh = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
-                    TrangThai = table.Column<string>(type: "TEXT", nullable: false),
-                    GiaPhong = table.Column<double>(type: "REAL", nullable: false),
-                    MoTa = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MaPhong = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    LoaiPhong = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SucChua = table.Column<int>(type: "int", nullable: false),
+                    SoNguoiHienTai = table.Column<int>(type: "int", nullable: false),
+                    Tang = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
+                    ToaNha = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    GioiTinh = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    TrangThai = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    GiaPhong = table.Column<double>(type: "float", nullable: false),
+                    MoTa = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -76,11 +76,11 @@ namespace KyTucXaManagement.Migrations
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    RoleId = table.Column<string>(type: "TEXT", nullable: false),
-                    ClaimType = table.Column<string>(type: "TEXT", nullable: true),
-                    ClaimValue = table.Column<string>(type: "TEXT", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -97,11 +97,11 @@ namespace KyTucXaManagement.Migrations
                 name: "AspNetUserClaims",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    UserId = table.Column<string>(type: "TEXT", nullable: false),
-                    ClaimType = table.Column<string>(type: "TEXT", nullable: true),
-                    ClaimValue = table.Column<string>(type: "TEXT", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -118,10 +118,10 @@ namespace KyTucXaManagement.Migrations
                 name: "AspNetUserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(type: "TEXT", nullable: false),
-                    ProviderKey = table.Column<string>(type: "TEXT", nullable: false),
-                    ProviderDisplayName = table.Column<string>(type: "TEXT", nullable: true),
-                    UserId = table.Column<string>(type: "TEXT", nullable: false)
+                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -138,8 +138,8 @@ namespace KyTucXaManagement.Migrations
                 name: "AspNetUserRoles",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "TEXT", nullable: false),
-                    RoleId = table.Column<string>(type: "TEXT", nullable: false)
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -162,10 +162,10 @@ namespace KyTucXaManagement.Migrations
                 name: "AspNetUserTokens",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "TEXT", nullable: false),
-                    LoginProvider = table.Column<string>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
-                    Value = table.Column<string>(type: "TEXT", nullable: true)
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -182,16 +182,16 @@ namespace KyTucXaManagement.Migrations
                 name: "ChiSoDiens",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Thang = table.Column<int>(type: "INTEGER", nullable: false),
-                    Nam = table.Column<int>(type: "INTEGER", nullable: false),
-                    ChiSoDau = table.Column<double>(type: "REAL", nullable: false),
-                    ChiSoCuoi = table.Column<double>(type: "REAL", nullable: false),
-                    DonGia = table.Column<double>(type: "REAL", nullable: false),
-                    NgayGhi = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    GhiChu = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
-                    PhongId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Thang = table.Column<int>(type: "int", nullable: false),
+                    Nam = table.Column<int>(type: "int", nullable: false),
+                    ChiSoDau = table.Column<double>(type: "float", nullable: false),
+                    ChiSoCuoi = table.Column<double>(type: "float", nullable: false),
+                    DonGia = table.Column<double>(type: "float", nullable: false),
+                    NgayGhi = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    GhiChu = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    PhongId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -208,16 +208,16 @@ namespace KyTucXaManagement.Migrations
                 name: "ChiSoNuocs",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Thang = table.Column<int>(type: "INTEGER", nullable: false),
-                    Nam = table.Column<int>(type: "INTEGER", nullable: false),
-                    ChiSoDau = table.Column<double>(type: "REAL", nullable: false),
-                    ChiSoCuoi = table.Column<double>(type: "REAL", nullable: false),
-                    DonGia = table.Column<double>(type: "REAL", nullable: false),
-                    NgayGhi = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    GhiChu = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
-                    PhongId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Thang = table.Column<int>(type: "int", nullable: false),
+                    Nam = table.Column<int>(type: "int", nullable: false),
+                    ChiSoDau = table.Column<double>(type: "float", nullable: false),
+                    ChiSoCuoi = table.Column<double>(type: "float", nullable: false),
+                    DonGia = table.Column<double>(type: "float", nullable: false),
+                    NgayGhi = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    GhiChu = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    PhongId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -234,22 +234,22 @@ namespace KyTucXaManagement.Migrations
                 name: "SinhViens",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    MaSinhVien = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
-                    HoTen = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    NgaySinh = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    GioiTinh = table.Column<string>(type: "TEXT", nullable: false),
-                    SoDienThoai = table.Column<string>(type: "TEXT", maxLength: 15, nullable: false),
-                    Email = table.Column<string>(type: "TEXT", nullable: true),
-                    DiaChi = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
-                    QueQuan = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
-                    DienUuTien = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
-                    NamHoc = table.Column<string>(type: "TEXT", maxLength: 20, nullable: true),
-                    TrangThai = table.Column<string>(type: "TEXT", nullable: false),
-                    NgayVaoKTX = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    UserId = table.Column<string>(type: "TEXT", nullable: true),
-                    PhongId = table.Column<int>(type: "INTEGER", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MaSinhVien = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    HoTen = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    NgaySinh = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    GioiTinh = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SoDienThoai = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DiaChi = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    QueQuan = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    DienUuTien = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    NamHoc = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    TrangThai = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NgayVaoKTX = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhongId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -266,17 +266,17 @@ namespace KyTucXaManagement.Migrations
                 name: "TaiSans",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    MaTaiSan = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
-                    TenTaiSan = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    LoaiTaiSan = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
-                    SoLuong = table.Column<int>(type: "INTEGER", nullable: false),
-                    TinhTrang = table.Column<string>(type: "TEXT", nullable: false),
-                    GiaTri = table.Column<double>(type: "REAL", nullable: false),
-                    NgayNhap = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    MoTa = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
-                    PhongId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MaTaiSan = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    TenTaiSan = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    LoaiTaiSan = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    SoLuong = table.Column<int>(type: "int", nullable: false),
+                    TinhTrang = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    GiaTri = table.Column<double>(type: "float", nullable: false),
+                    NgayNhap = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    MoTa = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    PhongId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -293,18 +293,18 @@ namespace KyTucXaManagement.Migrations
                 name: "DonYeuCaus",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    MaDon = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
-                    LoaiDon = table.Column<string>(type: "TEXT", nullable: false),
-                    NgayNop = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    NoiDung = table.Column<string>(type: "TEXT", maxLength: 1000, nullable: true),
-                    TrangThai = table.Column<string>(type: "TEXT", nullable: false),
-                    LyDoTuChoi = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
-                    NgayDuyet = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    NguoiDuyet = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
-                    SinhVienId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PhongId = table.Column<int>(type: "INTEGER", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MaDon = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    LoaiDon = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NgayNop = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    NoiDung = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    TrangThai = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LyDoTuChoi = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    NgayDuyet = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    NguoiDuyet = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    SinhVienId = table.Column<int>(type: "int", nullable: false),
+                    PhongId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -326,22 +326,22 @@ namespace KyTucXaManagement.Migrations
                 name: "HoaDons",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    MaHoaDon = table.Column<string>(type: "TEXT", maxLength: 30, nullable: false),
-                    Thang = table.Column<int>(type: "INTEGER", nullable: false),
-                    Nam = table.Column<int>(type: "INTEGER", nullable: false),
-                    TienPhong = table.Column<double>(type: "REAL", nullable: false),
-                    TienDien = table.Column<double>(type: "REAL", nullable: false),
-                    TienNuoc = table.Column<double>(type: "REAL", nullable: false),
-                    PhiKhac = table.Column<double>(type: "REAL", nullable: false),
-                    TrangThai = table.Column<string>(type: "TEXT", nullable: false),
-                    NgayLap = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    HanThanhToan = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    NgayThanhToan = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    GhiChu = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
-                    SinhVienId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PhongId = table.Column<int>(type: "INTEGER", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MaHoaDon = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    Thang = table.Column<int>(type: "int", nullable: false),
+                    Nam = table.Column<int>(type: "int", nullable: false),
+                    TienPhong = table.Column<double>(type: "float", nullable: false),
+                    TienDien = table.Column<double>(type: "float", nullable: false),
+                    TienNuoc = table.Column<double>(type: "float", nullable: false),
+                    PhiKhac = table.Column<double>(type: "float", nullable: false),
+                    TrangThai = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NgayLap = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    HanThanhToan = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    NgayThanhToan = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    GhiChu = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    SinhVienId = table.Column<int>(type: "int", nullable: false),
+                    PhongId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -363,13 +363,13 @@ namespace KyTucXaManagement.Migrations
                 name: "TheKTXs",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    MaThe = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
-                    NgayCap = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    NgayHetHan = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    TrangThai = table.Column<string>(type: "TEXT", nullable: false),
-                    SinhVienId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MaThe = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    NgayCap = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    NgayHetHan = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TrangThai = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SinhVienId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -386,18 +386,18 @@ namespace KyTucXaManagement.Migrations
                 name: "SuCoTaiSans",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    MoTaSuCo = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
-                    MucDo = table.Column<string>(type: "TEXT", nullable: false),
-                    TrangThai = table.Column<string>(type: "TEXT", nullable: false),
-                    NgayBao = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    NgaySua = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    ChiPhiSua = table.Column<double>(type: "REAL", nullable: true),
-                    NguoiSua = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
-                    GhiChu = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
-                    TaiSanId = table.Column<int>(type: "INTEGER", nullable: false),
-                    SinhVienBaoId = table.Column<int>(type: "INTEGER", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MoTaSuCo = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    MucDo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TrangThai = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NgayBao = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    NgaySua = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ChiPhiSua = table.Column<double>(type: "float", nullable: true),
+                    NguoiSua = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    GhiChu = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    TaiSanId = table.Column<int>(type: "int", nullable: false),
+                    SinhVienBaoId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -425,7 +425,8 @@ namespace KyTucXaManagement.Migrations
                 name: "RoleNameIndex",
                 table: "AspNetRoles",
                 column: "NormalizedName",
-                unique: true);
+                unique: true,
+                filter: "[NormalizedName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
@@ -451,7 +452,8 @@ namespace KyTucXaManagement.Migrations
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
-                unique: true);
+                unique: true,
+                filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ChiSoDiens_PhongId",

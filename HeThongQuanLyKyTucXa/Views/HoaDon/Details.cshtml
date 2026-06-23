@@ -1,0 +1,138 @@
+@model KyTucXaManagement.Models.HoaDon
+@{
+    ViewData["Title"] = "Chi tiết hóa đơn";
+    var tong = Model.TienPhong + Model.TienDien + Model.TienNuoc + Model.PhiKhac;
+    var isQuaHan = Model.TrangThai == "Chưa thanh toán" && Model.HanThanhToan < DateTime.Now;
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-receipt-cutoff me-2 text-success"></i>Chi tiết hóa đơn</span>
+                <div class="d-flex gap-2">
+                    <a asp-action="Print" asp-route-id="@Model.Id" target="_blank" class="btn btn-sm btn-outline-dark">
+                        <i class="bi bi-printer-fill me-1"></i>In
+                    </a>
+                    @if (Model.TrangThai != "Đã thanh toán")
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-pencil-fill me-1"></i>Sửa
+                        </a>
+                    }
+                    <a asp-action="Index" class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i>Quay lại
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Mã và trạng thái -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <div class="text-muted small">Mã hóa đơn</div>
+                        <code style="font-size:1rem">@Model.MaHoaDon</code>
+                    </div>
+                    <div>
+                        @if (isQuaHan)
+                        {
+                            <span class="badge fs-6" style="background:#FEE2E2;color:#991B1B">
+                                <i class="bi bi-exclamation-triangle-fill me-1"></i>Quá hạn
+                            </span>
+                        }
+                        else if (Model.TrangThai == "Đã thanh toán")
+                        {
+                            <span class="badge fs-6" style="background:#D1FAE5;color:#065F46">
+                                <i class="bi bi-check-circle-fill me-1"></i>Đã thanh toán
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge fs-6" style="background:#FEF3C7;color:#92400E">
+                                <i class="bi bi-clock-fill me-1"></i>Chưa thanh toán
+                            </span>
+                        }
+                    </div>
+                </div>
+
+                <!-- Thông tin sinh viên & phòng -->
+                <div class="row g-3 mb-4">
+                    <div class="col-6">
+                        <div class="p-3 rounded" style="background:#F8FAFC;border:1px solid #E2E8F0">
+                            <div class="text-muted small mb-1"><i class="bi bi-person-fill me-1"></i>Sinh viên</div>
+                            <div class="fw-bold">@Model.SinhVien?.HoTen</div>
+                            <div class="text-muted small">@Model.SinhVien?.MaSinhVien</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 rounded" style="background:#F8FAFC;border:1px solid #E2E8F0">
+                            <div class="text-muted small mb-1"><i class="bi bi-door-open-fill me-1"></i>Phòng</div>
+                            <div class="fw-bold">@(Model.Phong?.MaPhong ?? "—")</div>
+                            <div class="text-muted small">Tháng @Model.Thang/@Model.Nam</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chi tiết tiền -->
+                <div class="mb-4">
+                    <div class="fw-semibold mb-2 text-muted small text-uppercase">Chi tiết thanh toán</div>
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span><i class="bi bi-house-fill me-2 text-primary"></i>Tiền phòng</span>
+                        <span class="fw-semibold">@string.Format("{0:N0}đ", Model.TienPhong)</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span><i class="bi bi-lightning-charge-fill me-2 text-warning"></i>Tiền điện</span>
+                        <span class="fw-semibold">@string.Format("{0:N0}đ", Model.TienDien)</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span><i class="bi bi-droplet-fill me-2 text-info"></i>Tiền nước</span>
+                        <span class="fw-semibold">@string.Format("{0:N0}đ", Model.TienNuoc)</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span><i class="bi bi-plus-circle-fill me-2 text-secondary"></i>Phí khác</span>
+                        <span class="fw-semibold">@string.Format("{0:N0}đ", Model.PhiKhac)</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-3 mt-1">
+                        <span class="fw-bold fs-6">Tổng cộng</span>
+                        <span class="fw-bold fs-5" style="color:#2563EB">@string.Format("{0:N0}đ", tong)</span>
+                    </div>
+                </div>
+
+                <!-- Ngày tháng -->
+                <div class="row g-2 text-muted small mb-3">
+                    <div class="col-4">
+                        <div>Ngày lập</div>
+                        <div class="fw-semibold text-dark">@Model.NgayLap.ToString("dd/MM/yyyy")</div>
+                    </div>
+                    <div class="col-4">
+                        <div>Hạn thanh toán</div>
+                        <div class="fw-semibold @(isQuaHan ? "text-danger" : "text-dark")">
+                            @Model.HanThanhToan?.ToString("dd/MM/yyyy")
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div>Ngày thanh toán</div>
+                        <div class="fw-semibold text-dark">@(Model.NgayThanhToan?.ToString("dd/MM/yyyy") ?? "—")</div>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.GhiChu))
+                {
+                    <div class="alert alert-info py-2 small">
+                        <i class="bi bi-info-circle me-1"></i>@Model.GhiChu
+                    </div>
+                }
+
+                @if (Model.TrangThai != "Đã thanh toán")
+                {
+                    <form asp-action="XacNhanThanhToan" asp-route-id="@Model.Id" method="post"
+                          onsubmit="return confirm('Xác nhận thanh toán hóa đơn này?')">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-check-circle-fill me-2"></i>Xác nhận đã thanh toán
+                        </button>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+</div>

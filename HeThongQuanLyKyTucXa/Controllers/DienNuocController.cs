@@ -32,10 +32,17 @@ namespace KyTucXaManagement.Controllers
                 .Where(c => c.Thang == thang && c.Nam == nam)
                 .ToListAsync();
 
+            // Số sinh viên đang ở mỗi phòng (để tính chia tiền/người)
+            var soSvTheoPhong = await _context.SinhViens
+                .Where(s => s.TrangThai == "Đang nội trú" && s.PhongId != null)
+                .GroupBy(s => s.PhongId)
+                .Select(g => new { PhongId = g.Key, SoSinhVien = g.Count() })
+                .ToDictionaryAsync(x => x.PhongId!.Value, x => x.SoSinhVien);
             ViewBag.Thang = thang;
             ViewBag.Nam = nam;
             ViewBag.ChiSoDiens = chiSoDiens;
             ViewBag.ChiSoNuocs = chiSoNuocs;
+            ViewBag.SoSvTheoPhong = soSvTheoPhong;
             return View();
         }
 

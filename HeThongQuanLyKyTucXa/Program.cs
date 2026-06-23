@@ -11,10 +11,9 @@ builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 // Add services
 builder.Services.AddControllersWithViews();
 
-// Dùng SQLite — đường dẫn tuyệt đối để chạy được trên cả Mac và Windows
-var dbPath = Path.Combine(builder.Environment.ContentRootPath, "KyTucXa.db");
+// Dùng SQL Server
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite($"Data Source={dbPath}")
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
            .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>

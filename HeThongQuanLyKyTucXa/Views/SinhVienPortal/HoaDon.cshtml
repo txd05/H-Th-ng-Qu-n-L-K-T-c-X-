@@ -62,13 +62,14 @@
                         <th>Hạn TT</th>
                         <th>Ngày TT</th>
                         <th>Trạng thái</th>
+                        <th class="text-center">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
                     @if (Model == null || !Model.Any())
                     {
                         <tr>
-                            <td colspan="11" class="text-center text-muted py-4">
+                            <td colspan="12" class="text-center text-muted py-4">
                                 <i class="bi bi-inbox fs-3 d-block mb-2"></i>
                                 Chưa có hóa đơn nào
                             </td>
@@ -82,7 +83,7 @@
                             bool quaHan = hd.TrangThai == "Chưa thanh toán" && hd.HanThanhToan.HasValue && hd.HanThanhToan < DateTime.Now;
                             <tr class="@(quaHan ? "table-danger" : "")">
                                 <td class="text-muted small">@(stt++)</td>
-                                <td class="small">@hd.MaHoaDon</td>
+                                <td><code class="small">@hd.MaHoaDon</code></td>
                                 <td>@hd.Thang/@hd.Nam</td>
                                 <td>@hd.TienPhong.ToString("N0") đ</td>
                                 <td>@hd.TienDien.ToString("N0") đ</td>
@@ -95,10 +96,39 @@
                                 </td>
                                 <td class="small">@(hd.NgayThanhToan.HasValue ? hd.NgayThanhToan.Value.ToString("dd/MM/yyyy") : "—")</td>
                                 <td>
-                                    @{
-                                        var hdClass = hd.TrangThai == "Đã thanh toán" ? "bg-success" : "bg-warning text-dark";
+                                    @if (hd.TrangThai == "Đã thanh toán")
+                                    {
+                                        <span class="badge" style="background:#D1FAE5;color:#065F46">
+                                            <i class="bi bi-check-circle-fill me-1"></i>Đã thanh toán
+                                        </span>
                                     }
-                                    <span class="badge @hdClass small">@hd.TrangThai</span>
+                                    else if (quaHan)
+                                    {
+                                        <span class="badge" style="background:#FEE2E2;color:#991B1B">
+                                            <i class="bi bi-exclamation-triangle-fill me-1"></i>Quá hạn
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge" style="background:#FEF3C7;color:#92400E">
+                                            <i class="bi bi-clock-fill me-1"></i>Chưa thanh toán
+                                        </span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex gap-1 justify-content-center">
+                                        @if (hd.TrangThai != "Đã thanh toán")
+                                        {
+                                            <button type="button" class="btn btn-sm btn-success"
+                                                    onclick="xacNhanThanhToan(@hd.Id, '@hd.MaHoaDon', '@hd.TongTien.ToString("N0")')">
+                                                <i class="bi bi-credit-card-fill me-1"></i>Thanh toán
+                                            </button>
+                                        }
+                                        <a asp-controller="HoaDon" asp-action="Print" asp-route-id="@hd.Id"
+                                           target="_blank" class="btn btn-sm btn-outline-dark" title="In hóa đơn">
+                                            <i class="bi bi-printer-fill"></i>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         }
@@ -111,3 +141,52 @@
         Tổng: <strong>@(Model?.Count ?? 0)</strong> hóa đơn
     </div>
 </div>
+
+<!-- Modal xác nhận thanh toán -->
+<div class="modal fade" id="modalThanhToan" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-credit-card-fill text-success me-2"></i>Xác nhận thanh toán
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info py-2 small mb-3">
+                    <i class="bi bi-info-circle-fill me-1"></i>
+                    Vui lòng xác nhận bạn đã thanh toán hóa đơn này.
+                </div>
+                <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                    <span class="text-muted">Mã hóa đơn</span>
+                    <code id="modalMaHD"></code>
+                </div>
+                <div class="d-flex justify-content-between align-items-center py-2">
+                    <span class="text-muted">Số tiền</span>
+                    <span class="fw-bold fs-5 text-primary" id="modalSoTien"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Hủy</button>
+                <form id="formThanhToan" asp-controller="SinhVienPortal" asp-action="ThanhToanHoaDon" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" id="hdIdInput" />
+                    <button type="submit" class="btn btn-success btn-sm">
+                        <i class="bi bi-check-circle-fill me-1"></i>Xác nhận đã thanh toán
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    function xacNhanThanhToan(id, maHD, soTien) {
+        document.getElementById('hdIdInput').value = id;
+        document.getElementById('modalMaHD').textContent = maHD;
+        document.getElementById('modalSoTien').textContent = soTien + 'đ';
+        new bootstrap.Modal(document.getElementById('modalThanhToan')).show();
+    }
+</script>
+}

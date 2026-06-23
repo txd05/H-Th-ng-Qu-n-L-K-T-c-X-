@@ -35,7 +35,7 @@
         /* ─── SIDEBAR ─── */
         .sidebar {
             width: var(--sidebar-width);
-            min-height: 100vh;
+            height: 100vh;
             background: linear-gradient(175deg, var(--sidebar-from) 0%, var(--sidebar-to) 100%);
             position: fixed;
             top: 0; left: 0;
@@ -44,9 +44,12 @@
             overflow-x: hidden;
             box-shadow: 4px 0 24px rgba(30,58,138,.25);
             transition: var(--transition);
+            display: flex;
+            flex-direction: column;
         }
         .sidebar::-webkit-scrollbar { width: 4px; }
-        .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,.15); border-radius: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,.3); border-radius: 4px; }
+        .sidebar::-webkit-scrollbar-track { background: transparent; }
 
         /* Brand */
         .sidebar-brand {
@@ -432,10 +435,15 @@
                         <span class="nav-icon"><i class="bi bi-door-open-fill"></i></span>
                         Phòng
                     </a>
-                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "HoaDon" ? "active" : "")"
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "HoaDon" && ViewContext.RouteData.Values["action"]?.ToString() != "ThongKe" ? "active" : "")"
                        asp-controller="HoaDon" asp-action="Index">
                         <span class="nav-icon"><i class="bi bi-receipt-cutoff"></i></span>
                         Hóa đơn
+                    </a>
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "HoaDon" && ViewContext.RouteData.Values["action"]?.ToString() == "ThongKe" ? "active" : "")"
+                       asp-controller="HoaDon" asp-action="ThongKe">
+                        <span class="nav-icon"><i class="bi bi-bar-chart-fill"></i></span>
+                        Doanh thu
                     </a>
                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "DienNuoc" ? "active" : "")"
                        asp-controller="DienNuoc" asp-action="Index">
@@ -451,6 +459,22 @@
                        asp-controller="TaiSan" asp-action="SuCo">
                         <span class="nav-icon"><i class="bi bi-tools"></i></span>
                         Sự cố
+                    </a>
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "DonYeuCau" ? "active" : "")"
+                       asp-controller="Admin" asp-action="DonYeuCau">
+                        <span class="nav-icon"><i class="bi bi-file-earmark-text-fill"></i></span>
+                        Đơn yêu cầu
+                        @{
+                            int soDonCho = 0;
+                            try {
+                                var donChoDb = Context.RequestServices.GetService<KyTucXaManagement.Data.ApplicationDbContext>();
+                                soDonCho = donChoDb?.DonYeuCaus.Count(d => d.TrangThai == "Chờ duyệt") ?? 0;
+                            } catch { }
+                        }
+                        @if (soDonCho > 0)
+                        {
+                            <span class="badge bg-danger ms-auto">@soDonCho</span>
+                        }
                     </a>
 
                     @if (User.IsInRole("Admin"))

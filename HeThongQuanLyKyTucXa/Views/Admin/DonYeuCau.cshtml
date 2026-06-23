@@ -1,0 +1,204 @@
+@model List<KyTucXaManagement.Models.DonYeuCau>
+@{
+    ViewData["Title"] = "Quản lý đơn yêu cầu";
+    var trangThaiFilter = ViewBag.TrangThaiFilter as string;
+}
+
+<!-- Bộ lọc trạng thái -->
+<div class="d-flex gap-2 mb-4 flex-wrap align-items-center justify-content-between">
+    <div class="d-flex gap-2 flex-wrap">
+        <a asp-action="DonYeuCau" class="btn btn-sm @(string.IsNullOrEmpty(trangThaiFilter) ? "btn-primary" : "btn-outline-secondary")">
+            Tất cả <span class="badge bg-white text-dark ms-1">@Model.Count</span>
+        </a>
+        <a asp-action="DonYeuCau" asp-route-trangThai="Chờ duyệt"
+           class="btn btn-sm @(trangThaiFilter == "Chờ duyệt" ? "btn-warning text-dark" : "btn-outline-warning")">
+            <i class="bi bi-hourglass-split me-1"></i>Chờ duyệt
+            @if (ViewBag.SoChoXetDuyet > 0)
+            {
+                <span class="badge bg-danger ms-1">@ViewBag.SoChoXetDuyet</span>
+            }
+        </a>
+        <a asp-action="DonYeuCau" asp-route-trangThai="Đã duyệt"
+           class="btn btn-sm @(trangThaiFilter == "Đã duyệt" ? "btn-success" : "btn-outline-success")">
+            <i class="bi bi-check-circle me-1"></i>Đã duyệt
+        </a>
+        <a asp-action="DonYeuCau" asp-route-trangThai="Từ chối"
+           class="btn btn-sm @(trangThaiFilter == "Từ chối" ? "btn-danger" : "btn-outline-danger")">
+            <i class="bi bi-x-circle me-1"></i>Từ chối
+        </a>
+    </div>
+</div>
+
+<!-- Bảng danh sách đơn -->
+<div class="card">
+    <div class="card-header d-flex align-items-center gap-2">
+        <i class="bi bi-file-earmark-text-fill text-primary"></i>
+        Danh sách đơn yêu cầu
+        @if (!string.IsNullOrEmpty(trangThaiFilter))
+        {
+            <span class="badge ms-1" style="background:#EFF6FF;color:#1E40AF">@trangThaiFilter</span>
+        }
+    </div>
+    <div class="card-body p-0">
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5 text-muted">
+                <i class="bi bi-inbox fs-1 d-block mb-2 opacity-50"></i>
+                Không có đơn yêu cầu nào
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Mã đơn</th>
+                            <th>Sinh viên</th>
+                            <th>Loại đơn</th>
+                            <th>Nội dung</th>
+                            <th>Ngày nộp</th>
+                            <th>Trạng thái</th>
+                            <th class="text-center">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var don in Model)
+                        {
+                            <tr>
+                                <td><code>@don.MaDon</code></td>
+                                <td>
+                                    <div class="fw-semibold">@don.SinhVien?.HoTen</div>
+                                    <div class="text-muted small">@don.SinhVien?.MaSinhVien</div>
+                                </td>
+                                <td>
+                                    <span class="badge" style="background:#EFF6FF;color:#1E40AF">@don.LoaiDon</span>
+                                </td>
+                                <td>
+                                    <span class="text-truncate d-inline-block" style="max-width:200px" title="@don.NoiDung">
+                                        @don.NoiDung
+                                    </span>
+                                    @if (don.TrangThai == "Từ chối" && !string.IsNullOrEmpty(don.LyDoTuChoi))
+                                    {
+                                        <div class="text-danger small">
+                                            <i class="bi bi-info-circle me-1"></i>Lý do: @don.LyDoTuChoi
+                                        </div>
+                                    }
+                                </td>
+                                <td class="text-muted small">@don.NgayNop.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>
+                                    @if (don.TrangThai == "Chờ duyệt")
+                                    {
+                                        <span class="badge" style="background:#FEF3C7;color:#92400E">
+                                            <i class="bi bi-hourglass-split me-1"></i>Chờ duyệt
+                                        </span>
+                                    }
+                                    else if (don.TrangThai == "Đã duyệt")
+                                    {
+                                        <span class="badge" style="background:#D1FAE5;color:#065F46">
+                                            <i class="bi bi-check-circle-fill me-1"></i>Đã duyệt
+                                        </span>
+                                        <div class="text-muted small">@don.NgayDuyet?.ToString("dd/MM/yyyy")</div>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge" style="background:#FEE2E2;color:#991B1B">
+                                            <i class="bi bi-x-circle-fill me-1"></i>Từ chối
+                                        </span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @if (don.TrangThai == "Chờ duyệt")
+                                    {
+                                        <button class="btn btn-sm btn-success me-1"
+                                                onclick="duyetDon(@don.Id, '@don.MaDon')">
+                                            <i class="bi bi-check-lg me-1"></i>Duyệt
+                                        </button>
+                                        <button class="btn btn-sm btn-danger"
+                                                onclick="tuChoiDon(@don.Id, '@don.MaDon')">
+                                            <i class="bi bi-x-lg me-1"></i>Từ chối
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">
+                                            @if (!string.IsNullOrEmpty(don.NguoiDuyet))
+                                            {
+                                                <span><i class="bi bi-person me-1"></i>@don.NguoiDuyet</span>
+                                            }
+                                        </span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Modal Duyệt -->
+<div class="modal fade" id="modalDuyet" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <form asp-action="DuyetDon" method="post" class="modal-content">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" id="duyetId" />
+            <input type="hidden" name="hanhDong" value="duyet" />
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-check-circle-fill text-success me-2"></i>Xác nhận duyệt đơn</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc muốn <strong>duyệt</strong> đơn <code id="duyetMaDon"></code> không?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Huỷ</button>
+                <button type="submit" class="btn btn-sm btn-success">
+                    <i class="bi bi-check-lg me-1"></i>Xác nhận duyệt
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Từ chối -->
+<div class="modal fade" id="modalTuChoi" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <form asp-action="DuyetDon" method="post" class="modal-content">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" id="tuChoiId" />
+            <input type="hidden" name="hanhDong" value="tuchoi" />
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-x-circle-fill text-danger me-2"></i>Từ chối đơn</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Từ chối đơn <code id="tuChoiMaDon"></code>. Vui lòng nhập lý do:</p>
+                <textarea name="lyDoTuChoi" class="form-control" rows="3"
+                          placeholder="Nhập lý do từ chối..." required></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Huỷ</button>
+                <button type="submit" class="btn btn-sm btn-danger">
+                    <i class="bi bi-x-lg me-1"></i>Xác nhận từ chối
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function duyetDon(id, maDon) {
+            document.getElementById('duyetId').value = id;
+            document.getElementById('duyetMaDon').textContent = maDon;
+            new bootstrap.Modal(document.getElementById('modalDuyet')).show();
+        }
+        function tuChoiDon(id, maDon) {
+            document.getElementById('tuChoiId').value = id;
+            document.getElementById('tuChoiMaDon').textContent = maDon;
+            new bootstrap.Modal(document.getElementById('modalTuChoi')).show();
+        }
+    </script>
+}
